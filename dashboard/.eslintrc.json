@@ -1,0 +1,76 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true,
+        "jest": true
+    },
+    "extends": [
+        "plugin:react/recommended",
+        "airbnb",
+        "prettier"
+      ],
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+    },
+    "plugins": [
+        "react"
+    ],
+    "rules": {
+        "react/react-in-jsx-scope": "off",
+        "react/jsx-no-comment-textnodes":"off",
+        "react/button-has-type": "off",  
+        "react/jsx-props-no-spreading": "off",
+        "react/jsx-boolean-value": "off",
+        "react/no-array-index-key": "off",
+        "react/no-danger": "off",
+        "react/no-unstable-nested-components": "off",
+        "react-hooks/exhaustive-deps": "off",
+        "react/prop-types": "off",
+        "react/jsx-no-bind": "off",
+        "react/jsx-filename-extension": "off",
+        "react/jsx-no-useless-fragment": "off",
+        "react/jsx-no-constructed-context-values": "off",
+        "react/no-unescaped-entities": "off",
+        "arrow-body-style": "off",
+        "spaced-comment": "off",
+        "import/no-unresolved": "off",
+        "import/extensions": "off",
+        "import/prefer-default-export": "off",
+        "import/no-cycle": "off",
+        "prefer-const": "off",
+        "no-unused-vars": "off",
+        "no-else-return": "off",
+        "no-underscore-dangle": "off",
+        "no-unsafe-optional-chaining": "off",
+        "no-unused-expressions": "off",
+        "no-nested-ternary": "off",
+        "no-console": "off",
+        "no-param-reassign": "off",
+        "no-restricted-globals": "off",
+        "no-alert": "off",
+        "no-restricted-syntax": "off",
+        "no-plusplus": "off",
+        "no-shadow": "off",
+        "no-lonely-if":"off",
+        "no-return-await": "off",
+        "no-await-in-loop": "off",
+        "no-return-assign": "off",
+        "no-empty-pattern": "off",
+        "jsx-a11y/label-has-associated-control": "off",
+        "jsx-a11y/control-has-associated-label": "off",
+        "jsx-a11y/click-events-have-key-events": "off",
+        "jsx-a11y/no-noninteractive-element-interactions": "off",
+        "jsx-a11y/no-static-element-interactions": "off",
+        "consistent-return": "off",
+        "prefer-template": "off",
+        "dot-notation": "off"
+    },
+    "settings": {
+        "import/resolver": {
+          "node": {
+            "paths": ["src"]
+          }
+        }
+    }
+}

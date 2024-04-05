@@ -1,0 +1,22 @@
+stages:
+    - staging
+
+web-staging:
+    image: docker:latest
+    stage: staging
+    services:
+        - docker:dind
+    before_script:
+        - docker info
+    script:
+        - docker-compose down --remove-orphans --volumes --rmi local
+        - docker-compose up --build --remove-orphans -d
+    after_script:
+        - docker image prune --filter label=STG=METAVERSEA_ADMIN_DEPS --force
+        - docker image prune --filter label=STG=METAVERSEA_ADMIN_BUILDER --force
+    rules:
+        - if: '$CI_COMMIT_BRANCH == "main-branch"'
+          exists:
+              - docker-compose.yml
+    tags:
+        - staging

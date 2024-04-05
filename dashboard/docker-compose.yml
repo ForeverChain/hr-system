@@ -1,0 +1,18 @@
+version: '3'
+services:
+    metaverseassets_admin_front:
+        # image: node:19
+        build: ./
+        # working_dir: /home
+        # volumes:
+        #   - ./:/home/
+        # command: tail -f /dev/null
+        ports:
+            - 8191:80
+        restart: always
+#     networks:
+#       - metaverse_internal_net
+
+# networks:
+#   metaverse_internal_net:
+#     external: true

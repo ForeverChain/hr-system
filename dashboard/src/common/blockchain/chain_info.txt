@@ -1,0 +1,14 @@
+RPC_URL=http://121.67.187.153:5100
+CHAIN_ID=2021
+EXPLORER=http://121.67.187.153:5000/ui
+
+Contract ABI => "contracts/<contractName>.sol/<contractName>.json"
+ex) contracts/AssetNFT.sol/AssetNFT.json
+
+Contract Address => "contracts/<contractName>.sol/location.json"
+ex) contracts/AssetNFT.sol/location.json
+
+Admin Accounts => accounts.json .[0] // 첫번째 계정은 Admin 계정
+Development Accounts => accounts.json .[1] // 2번째 계정을 사용하시기 바랍니다.
+
+On Market NOT USE SIMPLE NFT !!!

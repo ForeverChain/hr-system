@@ -1,0 +1,22 @@
+FROM node:19 AS deps
+LABEL STG=METAVERSEA_ADMIN_DEPS
+WORKDIR /app
+COPY package.json .
+ARG NODE_ENV
+ENV NODE_ENV $NODE_ENV
+RUN npm install
+
+FROM node:19 AS builder
+LABEL STG=METAVERSEA_ADMIN_BUILDER
+WORKDIR /app
+COPY . ./
+COPY --from=deps /app/node_modules ./node_modules
+COPY public ./public
+COPY package.json jsconfig.json ./
+RUN npm run build
+
+FROM nginx:alpine
+WORKDIR /app
+COPY nginx.conf /etc/nginx/nginx.conf
+
+COPY --from=builder /app/build /app

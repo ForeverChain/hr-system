@@ -1,0 +1,7 @@
+.idea
+backend/node_modules
+backend/.env
+backend/uploads/*
+frontend/node_modules
+dashboard/node_modules
+.vscode
