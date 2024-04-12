@@ -490,14 +490,14 @@ app.put("/api/interview/:id", upload.none(), async (req, res) => {
         }
 
         // Update interview data
-        interview.talkingSkill = talkingSkill;
-        interview.appearance = appearance;
-        interview.advantage = advantage;
-        interview.disadvantage = disadvantage;
-        interview.skills = skills;
+        interview.talkingSkill = parseInt(talkingSkill);
+        interview.appearance = parseInt(appearance);
+        interview.advantage = parseInt(advantage);
+        interview.disadvantage = parseInt(disadvantage);
+        interview.skills = parseInt(skills);
 
         // Recalculate rate
-        const rate = (talkingSkill + appearance + advantage + disadvantage + skills) / 5;
+        const rate = (parseInt(talkingSkill) + parseInt(appearance) + parseInt(advantage) + parseInt(disadvantage) + parseInt(skills)) / 5;
 
         // Update result associated with the interview
         const result = await Result.findOne({ interViewQuestionId: interviewId });
@@ -506,12 +506,12 @@ app.put("/api/interview/:id", upload.none(), async (req, res) => {
             return res.status(404).json({ message: "Result not found" });
         }
 
-        result.talkingSkill = talkingSkill;
-        result.appearance = appearance;
-        result.advantage = advantage;
-        result.disadvantage = disadvantage;
-        result.skills = skills;
-        result.rate = rate;
+        result.talkingSkill = parseInt(talkingSkill);
+        result.appearance = parseInt(appearance);
+        result.advantage = parseInt(advantage);
+        result.disadvantage = parseInt(disadvantage);
+        result.skills = parseInt(skills);
+        result.rate = parseInt(rate);
 
         // Save changes
         await interview.save();
@@ -933,8 +933,85 @@ app.get("/api/candidate/:id", async (req, res) => {
 
 app.get("/api/interview", async (req, res) => {
     mongoose.connect(process.env.MONGO_URL);
-    const data = await Interview.find().populate("candidateId").populate("hr").populate("resultId");
-    res.json({ data });
+    const authHeader = req.headers.authorization;
+    if (authHeader) {
+        const token = authHeader.split(" ")[1];
+
+        jwt.verify(token, jwtSecret, async (err, user) => {
+            if (err) {
+                return res.sendStatus(403);
+            }
+
+            try {
+                let query = {}; // Initialize an empty query object
+                if (req.query.searchWord) {
+                    // If userName is provided in query params, add it to the query object
+                    query.userName = req.query.searchWord;
+                }
+                if (req.query.searchWord == "") {
+                    const data = await Interview.find(query).populate("candidateId").populate("hr").populate("resultId");
+                    return res.status(200).json({ data });
+                }
+                const data = await Interview.aggregate([
+                    {
+                        $lookup: {
+                            from: "candidates",
+                            localField: "candidateId",
+                            foreignField: "_id",
+                            as: "candidate",
+                        },
+                    },
+                    {
+                        $unwind: "$candidate",
+                    },
+                    {
+                        $lookup: {
+                            from: "hrs",
+                            localField: "hr",
+                            foreignField: "_id",
+                            as: "hr",
+                        },
+                    },
+                    {
+                        $unwind: "$hr",
+                    },
+                    {
+                        $lookup: {
+                            from: "results",
+                            localField: "resultId",
+                            foreignField: "_id",
+                            as: "result",
+                        },
+                    },
+                    {
+                        $unwind: "$result",
+                    },
+                    {
+                        $match: {
+                            "candidate.firstName": req.query.searchWord,
+                        },
+                    },
+                    {
+                        $project: {
+                            candidateId: "$candidate",
+                            hr: "$hr",
+                            resultId: ["$result"],
+                            date: 1,
+                            __v: 1,
+                        },
+                    },
+                ]);
+
+                return res.status(200).json({ data });
+            } catch (error) {
+                // Handle any errors that occur during database query or response sending
+                console.error(error);
+                res.status(500).send("Internal Server Error");
+            }
+        });
+    } else {
+        res.sendStatus(401);
+    }
 });
 
 app.post("/api/places", async (req, res) => {
