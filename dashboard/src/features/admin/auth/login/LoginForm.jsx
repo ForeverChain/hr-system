@@ -22,6 +22,7 @@ const initialLoginState = {
 
 function LoginForm() {
     const [isLoading, setIsLoading] = useState(false);
+    const [isAdminLogin, setIsAdminLogin] = useState(false); // State for admin login option
     const { onChange, onError, formState } = useForm(initialLoginState);
     const { authState, setAuthState } = useGlobalCtx();
     const { showGlobalPopup } = useGlobalPopupCtx();
@@ -32,7 +33,7 @@ function LoginForm() {
         setIsLoading(true);
         try {
             const loginData = {
-                email: formState?.email?.value?.trim(),
+                userName: formState?.email?.value?.trim(),
                 password: formState?.password?.value?.trim(),
             };
 
@@ -43,26 +44,25 @@ function LoginForm() {
                 return;
             }
 
-            const res = await AdminServices.loginAdmin(loginData);
+            let res;
+            if (isAdminLogin) {
+                // Check if admin login option is selected
+                res = await AdminServices.loginAdmin(loginData);
+            } else {
+                res = await AdminServices.loginHr(loginData);
+            }
 
-            if (res?.user.isAdmin && res?.token) {
-                Cookies.set(CookieName.TOKEN, res?.token);
-                setAuthState(res?.user);
+            if (res?.data?.token) {
+                Cookies.set(CookieName.TOKEN, res?.data?.token);
+                setAuthState(res?.data.admin);
                 history.push('/');
             } else {
+                // Handle login failure
                 showGlobalPopup(GLOBAL_POPUP_TYPES.ALERT, {
                     message: 'Нэвтрэх эрхгүй!',
                 });
             }
-            if (res.response.status === 404) {
-                showGlobalPopup(GLOBAL_POPUP_TYPES.ALERT, {
-                    message: 'Хэрэглэгчийн нэр эсвэл нууц үг таарахгүй байна!',
-                });
-            } else {
-                showGlobalPopup(GLOBAL_POPUP_TYPES.ALERT, {
-                    message: 'ямар нэгэн алдаа гарлаа!',
-                });
-            }
+            // Other error handling logic
         } catch (e) {
             console.error(e);
         } finally {
@@ -73,7 +73,6 @@ function LoginForm() {
     return (
         <form>
             <FormRow errMsg={formState?.email?.error}>
-                {/* <LabelArea label='Имэйл' /> */}
                 <InputEmail
                     name='email'
                     onChange={onChange}
@@ -83,7 +82,6 @@ function LoginForm() {
                 />
             </FormRow>
             <FormRow errMsg={formState?.password?.error}>
-                {/* <LabelArea label='Password' /> */}
                 <InputPassword
                     name='password'
                     onChange={onChange}
@@ -92,6 +90,18 @@ function LoginForm() {
                     placeholder='нууц үг'
                 />
             </FormRow>
+            <div className='mb-4 mt-2'>
+                <input
+                    type='checkbox'
+                    checked={isAdminLogin}
+                    onChange={() => setIsAdminLogin(!isAdminLogin)}
+                    className='mr-2 leading-tight'
+                    id='isAdmin'
+                />
+                <label htmlFor='isAdmin' className='text-sm'>
+                    Админ эрхээр нэвтрэх
+                </label>
+            </div>
             <div className='mt-5'>
                 <Btn disabled={isLoading} isLoading={isLoading} onClick={handleSubmit}>
                     Ok

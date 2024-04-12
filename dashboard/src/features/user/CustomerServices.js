@@ -2,7 +2,7 @@ import requests from '../../common/axios/httpService';
 
 const CustomerServices = {
     getAllCustomers: async ({ searchText = '', page = 0 }) => {
-        const res = requests.get(`/users?searchWord=${searchText}&page=${page}`);
+        const res = requests.get(`/candidate?searchWord=${searchText}&page=${page}`);
         return res;
     },
 
@@ -16,7 +16,7 @@ const CustomerServices = {
     },
     // user create
     createCustomer: async (body) => {
-        return requests.post(`/customer/create`, body);
+        return requests.post(`/candidate`, body);
     },
 
     filterCustomer: async (email) => {
@@ -24,15 +24,19 @@ const CustomerServices = {
     },
 
     getCustomerById: async (id) => {
-        return requests.get(`/users/${id}`);
+        return requests.get(`/candidate/${id}`);
+    },
+
+    getHrById: async (id) => {
+        return requests.get(`/hr/${id}`);
     },
 
     updateCustomer: async (id, body) => {
-        return requests.put(`/users/${id}`, body);
+        return requests.put(`/customers/${id}`, body);
     },
 
     deleteCustomer: async (id) => {
-        return requests.delete(`/users/${id}`);
+        return requests.delete(`/candidate/${id}`);
     },
 };
 

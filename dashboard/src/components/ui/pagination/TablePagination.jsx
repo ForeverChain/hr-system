@@ -15,7 +15,7 @@ export default function TablePagination({ totalItems, itemsPerPage, currentPage,
 
     return (
         <div className='flex justify-between items-center my-4'>
-            <p className='text-emerald-700 font-bold'>
+            {/* <p className='text-emerald-700 font-bold'>
                 Showing {(currentPage - 1) * itemsPerPage + 1}-
                 {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems}
             </p>
@@ -49,7 +49,7 @@ export default function TablePagination({ totalItems, itemsPerPage, currentPage,
                         &raquo;
                     </button>
                 </li>
-            </ul>
+            </ul> */}
         </div>
     );
 }

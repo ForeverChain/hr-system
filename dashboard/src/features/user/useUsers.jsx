@@ -9,7 +9,7 @@ export default function useUsers() {
         try {
             const res = await CustomerServices.getAllCustomers({ searchText: searchingText, page })
                 .then((response) => {
-                    setUsersList(response?.result?.content);
+                    setUsersList(response?.data);
                     return response;
                 })
                 .catch((err) => {
@@ -41,9 +41,7 @@ export default function useUsers() {
         try {
             await CustomerServices.getCustomerById(id)
                 .then((response) => {
-                    if (response.message === 'success') {
-                        setUsersDetail(response?.result);
-                    }
+                    setUsersDetail(response?.data);
                 })
                 .catch((err) => {
                     console.error(err);
@@ -90,11 +88,45 @@ export default function useUsers() {
         }
     }
 
+    async function addHr(body) {
+        try {
+            const res = await CustomerServices.createCustomer(body)
+                .then((res) => {
+                    return res;
+                })
+                .catch((err) => {
+                    console.error(err);
+                });
+
+            return res;
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    async function getHrDetail(id) {
+        try {
+            await CustomerServices.getHrById(id)
+                .then((response) => {
+                    if (response.message === 'success') {
+                        setUsersDetail(response?.result);
+                    }
+                })
+                .catch((err) => {
+                    console.error(err);
+                });
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
     return {
         getAllCustomersList,
         getCustomersDetail,
         updateUser,
         deleteUser,
+        addHr,
+        getHrDetail,
         getExportCustomersList,
     };
 }

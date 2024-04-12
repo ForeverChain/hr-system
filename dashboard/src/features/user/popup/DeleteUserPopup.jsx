@@ -21,28 +21,32 @@ export default function DeleteUserPopup() {
 
     return (
         <MainPopup
-            title='회원 삭제'
+            title='Ажил горилогч устгах хэсэг'
             footerAction1={hidePopup}
-            footerText1='취소'
-            footerAction2={() => deleteUserFunction(popupState?.deletingUserInfo?.id)}
-            footerText2='삭제'
+            footerText1='Болих'
+            footerAction2={() => deleteUserFunction(popupState?.deletingUserInfo?._id)}
+            footerText2=' Устгах'
             minWidth={500}
         >
             <div className='flex flex-col gap-1'>
                 <div className='flex gap-2'>
                     <div className='min-w-[100px]'>ID</div>
-                    <div>{popupState?.deletingUserInfo?.id}</div>
+                    <div>{popupState?.deletingUserInfo?._id}</div>
                 </div>
                 <div className='flex gap-2'>
-                    <div className='min-w-[100px]'>이름</div>
-                    <div>{popupState?.deletingUserInfo?.name}</div>
+                    <div className='min-w-[100px]'>Овог</div>
+                    <div>{popupState?.deletingUserInfo?.firstName}</div>
                 </div>
                 <div className='flex gap-2'>
-                    <div className='min-w-[100px]'>이메일</div>
+                    <div className='min-w-[100px]'>Нэр</div>
+                    <div>{popupState?.deletingUserInfo?.lastName}</div>
+                </div>
+                <div className='flex gap-2'>
+                    <div className='min-w-[100px]'>Имэйл</div>
                     <div>{popupState?.deletingUserInfo?.email}</div>
                 </div>
                 <p className=' text-red-600 text-center mt-5 text-lg font-semibold'>
-                    해당 회원을 삭제 하시겠습니까?
+                    Устгахдаа илтгэлтэй байна уу?
                 </p>
             </div>
         </MainPopup>

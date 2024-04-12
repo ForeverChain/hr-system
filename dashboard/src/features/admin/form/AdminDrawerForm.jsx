@@ -17,8 +17,7 @@ import { useGlobalCtx } from '@/common/global/useGlobalCtx';
 
 const initialFormData = {
     image: { value: null, error: null },
-    name: { value: null, error: null },
-    email: { value: null, error: null },
+    userName: { value: null, error: null },
     password: { value: null, error: null },
 };
 
@@ -34,10 +33,8 @@ export default function AdminDrawerForm({ id }) {
         setDrawerSubmitLoading(true);
         const payload = new FormData();
 
-        payload.append('name', formState?.name?.value);
-        payload.append('email', formState?.email?.value);
+        payload.append('userName', formState?.userName?.value);
         payload.append('password', formState?.password?.value);
-        payload.append('image', formState?.image?.value);
 
         addAdmin(payload)
             .then((res) => {
@@ -58,47 +55,17 @@ export default function AdminDrawerForm({ id }) {
         <form>
             <div className='px-6 pt-8 flex-grow scrollbar-hide w-full max-h-full pb-40'>
                 <FormRow
-                    errMsg={formState?.name?.error}
+                    errMsg={formState?.userName?.error}
                     className='px-6 pt-6 flex-grow scrollbar-hide w-full max-h-full grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6'
                 >
-                    <LabelArea label='이미지' />
-                    <div className='col-span-8 sm:col-span-4'>
-                        <InputFileUpload
-                            idName='adminFileUpload'
-                            onChange={setValueField}
-                            isValid={Boolean(formState?.image?.error)}
-                            name='image'
-                            value={formState?.image?.value}
-                        />
-                    </div>
-                </FormRow>
-                <FormRow
-                    errMsg={formState?.name?.error}
-                    className='px-6 pt-6 flex-grow scrollbar-hide w-full max-h-full grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6'
-                >
-                    <LabelArea label='이름' />
+                    <LabelArea label='Админ нэр' />
                     <div className='col-span-8 sm:col-span-4'>
                         <InputText
-                            name='name'
+                            name='userName'
                             onChange={onChange}
-                            value={formState?.name?.value}
-                            isValid={Boolean(formState?.name?.error)}
-                            placeholder='이름'
-                        />
-                    </div>
-                </FormRow>
-                <FormRow
-                    errMsg={formState?.email?.error}
-                    className='px-6 pt-6 flex-grow scrollbar-hide w-full max-h-full grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6'
-                >
-                    <LabelArea label='이메일' />
-                    <div className='col-span-8 sm:col-span-4'>
-                        <InputText
-                            name='email'
-                            onChange={onChange}
-                            value={formState?.email?.value}
-                            isValid={Boolean(formState?.email?.error)}
-                            placeholder='이메일'
+                            value={formState?.userName?.value}
+                            isValid={Boolean(formState?.userName?.error)}
+                            placeholder=''
                         />
                     </div>
                 </FormRow>
@@ -106,14 +73,14 @@ export default function AdminDrawerForm({ id }) {
                     errMsg={formState?.password?.error}
                     className='px-6 pt-6 flex-grow scrollbar-hide w-full max-h-full grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6'
                 >
-                    <LabelArea label='비밀번호' />
+                    <LabelArea label='Нууц үг' />
                     <div className='col-span-8 sm:col-span-4'>
                         <InputPassword
                             name='password'
                             onChange={onChange}
                             value={formState?.password?.value}
                             isValid={Boolean(formState?.password?.error)}
-                            placeholder='비밀번호'
+                            placeholder=''
                         />
                     </div>
                 </FormRow>
@@ -128,7 +95,7 @@ export default function AdminDrawerForm({ id }) {
                         className='h-12 bg-white w-full text-red-500 hover:bg-red-50 hover:border-red-100 hover:text-red-600 dark:bg-gray-700 dark:border-gray-700 dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-red-700'
                         layout='outline'
                     >
-                        취소
+                        Болих
                     </Button>
                 </div>
                 <div className='flex-grow-0 md:flex-grow lg:flex-grow xl:flex-grow'>
@@ -137,7 +104,7 @@ export default function AdminDrawerForm({ id }) {
                         disabled={drawerSubmitLoading}
                         className='w-full h-12'
                     >
-                        <span>{drawerSubmitLoading ? '로드 중...' : '추가'}</span>
+                        <span>{drawerSubmitLoading ? '로드 중...' : 'Оруулах'}</span>
                     </Button>
                 </div>
             </div>

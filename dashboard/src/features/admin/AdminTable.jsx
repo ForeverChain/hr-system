@@ -30,27 +30,19 @@ function AdminTable({ admins }) {
 
             <TableBody>
                 {admins?.map((admin) => (
-                    <TableRow key={admin.id}>
+                    <TableRow key={admin._id}>
                         <TableCell>
-                            <span className='font-semibold uppercase text-xs'> {admin?.id}</span>
+                            <span className='font-semibold uppercase text-xs'> {admin?._id}</span>
                         </TableCell>
                         <TableCell>
-                            <span className='text-sm'>{admin.name}</span>
-                        </TableCell>
-                        <TableCell>
-                            <span className='text-sm'>{admin.email}</span>{' '}
-                        </TableCell>
-                        <TableCell>
-                            <span className='text-sm'>
-                                {dayjs(admin.createdDate).format('YYYY년 MM월 DD일')}
-                            </span>
+                            <span className='text-sm'>{admin.userName}</span>
                         </TableCell>
 
                         <TableCell>
                             <div className='flex justify-end text-right'>
                                 <EditDeleteButton
                                     title={admin.name}
-                                    id={admin.id}
+                                    id={admin._id}
                                     edittingRowInfo={admin}
                                     handleUpdate={handleUpdate}
                                     openDeleteModal={() => openModal(admin)}

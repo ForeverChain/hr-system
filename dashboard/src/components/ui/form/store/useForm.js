@@ -17,10 +17,10 @@ function useForm(data, options) {
         }
         return {};
     }
-    function onChange(e, isCheckbox) {
+    function onChange(e, isCheckbox = false) {
         const { value, name } = e.target;
+        console.log('e.target', e.target);
         const theValue = isCheckbox ? e.target.checked.toString() : value;
-
         formDispatch({
             type: 'CHANGE',
             payload: { fieldName: name, value: theValue },

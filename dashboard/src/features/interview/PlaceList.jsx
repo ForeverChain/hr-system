@@ -8,7 +8,7 @@ function PlaceList() {
     const { isToggleReset, pagination, setPlaceList } = usePlaceCtx();
 
     useEffect(() => {
-        placeService.getPlaceList().then((res) => setPlaceList(res));
+        placeService.getPlaceList().then((res) => setPlaceList(res?.data));
     }, [isToggleReset]);
 
     return (

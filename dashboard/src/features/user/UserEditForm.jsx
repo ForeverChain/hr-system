@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Button } from '@windmill/react-ui';
+import {
+    Card,
+    CardBody,
+    Table,
+    TableCell,
+    TableContainer,
+    TableFooter,
+    TableHeader,
+    Button,
+} from '@windmill/react-ui';
 import FormRow from '@/components/ui/form/FormRow';
 import InputText from '@/components/ui/form/elements/input/InputText';
 import LabelArea from '@/components/ui/form/selectOption/LabelArea';
@@ -8,10 +17,13 @@ import TextArea from '@/components/ui/form/elements/textArea/TextArea';
 import CustomerServices from './CustomerServices';
 import useUsers from './useUsers';
 import { useGlobalCtx } from '@/common/global/useGlobalCtx';
+import useToggleDrawer from '@/common/hooks/useToggleDrawer';
 
 export default function UserEditForm(props) {
+    const { serviceId } = useToggleDrawer();
     const { usersDetail, toggleDrawer, isDrawerOpen, isItInfo } = props;
     const { edittingRowInfo } = useGlobalCtx();
+    const { getAllCustomersList, getExportCustomersList, addHr, getHrDetail } = useUsers();
     const [initialProfileFormData, setInitialProfileFormData] = useState({
         name: { value: usersDetail?.name, error: null },
         address: { value: usersDetail?.address, error: null },
@@ -35,137 +47,583 @@ export default function UserEditForm(props) {
     // }, []);
     const { onChange, onError, formState } = useForm(initialProfileFormData);
 
-    async function handleSubmit(e) {
-        e.preventDefault();
+    const [newHRData, setNewHRData] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phoneNumber: '',
+        country: '',
+        school: '',
+        educationDegrees: '',
+        educationStartDate: '',
+        educationEndDate: '',
+        job: '',
+        gpa: '',
+        courseName: '',
+        courseStartDate: '',
+        courseEndDate: '',
+        acquiredSkill: '',
+        companyName: '',
+        languageName: '',
+        reading: '',
+        listening: '',
+        writing: '',
+        speaking: '',
+        company: '',
+        role: '',
+        workStartDate: '',
+        workEndDate: '',
+        quitJobReason: '',
+    });
 
-        const payload = {
-            name: formState?.name?.value,
-            phone: formState?.phone?.value,
-            address: formState?.address?.value,
-            introduce: formState?.introduction?.value,
-        };
-
-        updateUser(usersDetail?.id, payload).then((response) => {
-            if (response.message === 'success') {
-                toggleDrawer();
-            }
+    function handleInputChange(event) {
+        const { name, value } = event.target;
+        setNewHRData({
+            ...newHRData,
+            [name]: value,
         });
     }
 
+    function handleSubmitNewHR(event) {
+        event.preventDefault();
+        addHr(newHRData);
+        // setNewHRData({
+        //     firstName: '',
+        //     lastName: '',
+        //     email: '',
+        //     phoneNumber: '',
+        //     country: '',
+        //     school: '',
+        //     educationDegrees: '',
+        //     educationStartDate: '',
+        //     educationEndDate: '',
+        //     job: '',
+        //     gpa: '',
+        //     courseName: '',
+        //     courseStartDate: '',
+        //     courseEndDate: '',
+        //     acquiredSkill: '',
+        //     companyName: '',
+        //     languageName: '',
+        //     reading: '',
+        //     listening: '',
+        //     writing: '',
+        //     speaking: '',
+        //     company: '',
+        //     role: '',
+        //     workStartDate: '',
+        //     workEndDate: '',
+        //     quitJobReason: '',
+        // });
+    }
+
+    console.log(edittingRowInfo);
+
     useEffect(() => {
-        if (usersDetail) {
-            setInitialProfileFormData({
-                name: { value: usersDetail?.name, error: null },
-                address: { value: usersDetail?.address, error: null },
-                phone: { value: usersDetail?.phone, error: null },
-                introduction: { value: usersDetail?.introduce, error: null },
-            });
-        }
-    }, [usersDetail]);
+        setNewHRData({
+            firstName: edittingRowInfo?.firstName || '',
+            lastName: edittingRowInfo?.lastName || '',
+            email: edittingRowInfo?.email || '',
+            phoneNumber: edittingRowInfo?.phoneNumber || '',
+            country: edittingRowInfo?.education?.[0]?.country || '',
+            school: edittingRowInfo?.education?.[0]?.school || '',
+            educationDegrees: edittingRowInfo?.education?.[0]?.educationDegrees || '',
+            educationStartDate: edittingRowInfo?.education?.[0]?.educationStartDate || '',
+            educationEndDate: edittingRowInfo?.education?.[0]?.educationEndDate || '',
+            job: edittingRowInfo?.education?.[0]?.job || '',
+            gpa: edittingRowInfo?.education?.[0]?.gpa || '',
+            courseName: edittingRowInfo?.course?.[0]?.courseName || '',
+            courseStartDate: edittingRowInfo?.course?.[0]?.courseStartDate || '',
+            courseEndDate: edittingRowInfo?.course?.[0]?.courseEndDate || '',
+            acquiredSkill: edittingRowInfo?.course?.[0]?.acquiredSkill || '',
+            companyName: edittingRowInfo?.course?.[0]?.companyName || '',
+            languageName: edittingRowInfo?.language?.[0]?.languageName || '',
+            reading: edittingRowInfo?.language?.[0]?.reading || '',
+            listening: edittingRowInfo?.language?.[0]?.listening || '',
+            writing: edittingRowInfo?.language?.[0]?.writing || '',
+            speaking: edittingRowInfo?.language?.[0]?.speaking || '',
+            company: edittingRowInfo?.workExperiences?.[0]?.company || '',
+            role: edittingRowInfo?.workExperiences?.[0]?.role || '',
+            workStartDate: edittingRowInfo?.workExperiences?.[0]?.workStartDate || '',
+            workEndDate: edittingRowInfo?.workExperiences?.[0]?.workEndDate || '',
+            quitJobReason: edittingRowInfo?.workExperiences?.[0]?.quitJobReason || '',
+        });
+    }, []);
 
     return (
-        <form>
-            <div className='px-6 pt-8 flex-grow scrollbar-hide w-full max-h-full pb-40'>
-                <div className='px-6 pt-8 flex-grow scrollbar-hide w-full max-h-full'>
-                    <div className='grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6'>
-                        <LabelArea label='이메일' />
-                        <div className='col-span-8 sm:col-span-4'>{usersDetail?.email}</div>
-                    </div>
-                </div>
-                <div className='px-6 pt-4 flex-grow scrollbar-hide w-full max-h-full'>
-                    <div className='grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6'>
-                        <LabelArea label='지갑주소' />
-                        <div className='col-span-8 sm:col-span-4'>{usersDetail?.walletAddress}</div>
-                    </div>
-                </div>
+        <Card className='min-w-0 shadow-xs overflow-visible bg-white dark:bg-gray-800 mb-5'>
+            <CardBody>
+                <form onSubmit={handleSubmitNewHR}>
+                    <div className='grid grid-cols-2 gap-4'>
+                        {/* Name Input */}
+                        <div>
+                            <label
+                                htmlFor='lastName'
+                                className='block text-sm font-medium text-gray-700'
+                            >
+                                Овог
+                            </label>
+                            <input
+                                type='text'
+                                id='lastName'
+                                name='lastName'
+                                value={newHRData.lastName}
+                                onChange={handleInputChange}
+                                className='mt-1 p-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                            />
+                        </div>
 
-                <FormRow
-                    errMsg={formState?.name?.error}
-                    className=' px-6 pt-6 flex-grow scrollbar-hide w-full max-h-full grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6'
-                >
-                    <LabelArea label='이름' />
-                    <div className='col-span-8 sm:col-span-4'>
-                        <InputText
-                            name='name'
-                            onChange={onChange}
-                            value={formState?.name?.value}
-                            isValid={Boolean(formState?.name?.error)}
-                            placeholder='김부자'
-                        />
-                    </div>
-                </FormRow>
+                        <div>
+                            <label
+                                htmlFor='firstName'
+                                className='block text-sm font-medium text-gray-700'
+                            >
+                                Нэр
+                            </label>
+                            <input
+                                type='text'
+                                id='firstName'
+                                name='firstName'
+                                value={newHRData.firstName}
+                                onChange={handleInputChange}
+                                className='mt-1 p-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                            />
+                        </div>
 
-                <FormRow
-                    errMsg={formState?.phone?.error}
-                    className=' px-6 pt-6 flex-grow scrollbar-hide w-full max-h-full grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6'
-                >
-                    <LabelArea label='전화번호' />
-                    <div className='col-span-8 sm:col-span-4'>
-                        <InputText
-                            name='phone'
-                            onChange={onChange}
-                            value={formState?.phone?.value}
-                            isValid={Boolean(formState?.phone?.error)}
-                            placeholder='01012345678'
-                        />
-                    </div>
-                </FormRow>
+                        {/* Email Input */}
+                        <div>
+                            <label
+                                htmlFor='email'
+                                className='block text-sm font-medium text-gray-700'
+                            >
+                                Имэйл
+                            </label>
+                            <input
+                                type='email'
+                                id='email'
+                                name='email'
+                                value={newHRData.email}
+                                onChange={handleInputChange}
+                                className='mt-1 p-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                            />
+                        </div>
 
-                <FormRow
-                    errMsg={formState?.address?.error}
-                    className=' px-6 pt-6 flex-grow scrollbar-hide w-full max-h-full grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6'
-                >
-                    <LabelArea label='주소' />
-                    <div className='col-span-8 sm:col-span-4'>
-                        <InputText
-                            name='address'
-                            onChange={onChange}
-                            value={formState?.address?.value}
-                            isValid={Boolean(formState?.address?.error)}
-                            placeholder='대한민국 서울특별시 금천구 서부샛길 606, 대성디폴리스A동'
-                        />
-                    </div>
-                </FormRow>
+                        <div>
+                            <label
+                                htmlFor='email'
+                                className='block text-sm font-medium text-gray-700'
+                            >
+                                Утасны дугаар
+                            </label>
+                            <input
+                                type='text'
+                                id='phoneNumber'
+                                name='phoneNumber'
+                                value={newHRData.phoneNumber}
+                                onChange={handleInputChange}
+                                className='mt-1 p-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                            />
+                        </div>
+                        <div className='w-full'>Боловсролын ба мэргэжлийн ур чадвар</div>
+                        <div></div>
+                        <div>
+                            <label
+                                htmlFor='email'
+                                className='block text-sm font-medium text-gray-700'
+                            >
+                                Улс
+                            </label>
+                            <input
+                                type='text'
+                                id='country'
+                                name='country'
+                                value={newHRData.country}
+                                onChange={handleInputChange}
+                                className='mt-1 p-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                            />
+                        </div>
 
-                <FormRow
-                    errMsg={formState?.introduction?.error}
-                    className='px-6 pt-6 flex-grow scrollbar-hide w-full max-h-full grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6'
-                >
-                    <LabelArea label='자기소개' />
-                    <div className='col-span-8 sm:col-span-4'>
-                        <TextArea
-                            name='introduction'
-                            cols={15}
-                            onChange={onChange}
-                            placeholder='Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sed nunc ut mi sodales posuere at ac dui. Morbi ac tellus vitae nulla eleifend vehicula in ac justo. Morbi consequat fermentum lacus ut vehicula. Praesent eget tincidunt orci. Morbi in tincidunt risus, non consectetur nibh. Nam ornare est libero, dapibus ullamcorper lorem tempus id. Sed ac nulla id purus accumsan cursus eget ac erat. Suspendisse quis lectus massa.'
-                            value={formState?.introduction?.value}
-                        />
-                    </div>
-                </FormRow>
-            </div>
+                        <div>
+                            <label
+                                htmlFor='email'
+                                className='block text-sm font-medium text-gray-700'
+                            >
+                                Сургууль
+                            </label>
+                            <input
+                                type='text'
+                                id='school'
+                                name='school'
+                                value={newHRData.school}
+                                onChange={handleInputChange}
+                                className='mt-1 p-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                            />
+                        </div>
+                        <div>
+                            <label
+                                htmlFor='email'
+                                className='block text-sm font-medium text-gray-700'
+                            >
+                                Боловсролын зэрэг
+                            </label>
+                            <input
+                                type='text'
+                                id='educationDegrees'
+                                name='educationDegrees'
+                                value={newHRData.educationDegrees}
+                                onChange={handleInputChange}
+                                className='mt-1 p-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                            />
+                        </div>
+                        <div>
+                            <label
+                                htmlFor='email'
+                                className='block text-sm font-medium text-gray-700'
+                            >
+                                Элссэн огноо
+                            </label>
+                            <input
+                                type='date'
+                                id='educationStartDate'
+                                name='educationStartDate'
+                                value={newHRData.educationStartDate}
+                                onChange={handleInputChange}
+                                className='mt-1 p-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                            />
+                        </div>
 
-            <div
-                className='fixed z-10 bottom-0 w-full right-0 py-4 lg:py-8 px-6 grid gap-4 lg:gap-6 xl:gap-6 md:flex xl:flex bg-gray-50 border-t border-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300'
-                style={{ right: !isDrawerOpen && -50 }}
-            >
-                <div className='flex-grow-0 md:flex-grow lg:flex-grow xl:flex-grow'>
-                    <Button
-                        onClick={toggleDrawer}
-                        className='h-12 bg-white w-full text-red-500 hover:bg-red-50 hover:border-red-100 hover:text-red-600 dark:bg-gray-700 dark:border-gray-700 dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-red-700'
-                        layout='outline'
-                    >
-                        취소
-                    </Button>
-                </div>
+                        <div>
+                            <label
+                                htmlFor='email'
+                                className='block text-sm font-medium text-gray-700'
+                            >
+                                Төгссөн огноо
+                            </label>
+                            <input
+                                type='date'
+                                id='educationEndDate'
+                                name='educationEndDate'
+                                value={newHRData.educationEndDate}
+                                onChange={handleInputChange}
+                                className='mt-1 p-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                            />
+                        </div>
+                        <div>
+                            <label
+                                htmlFor='email'
+                                className='block text-sm font-medium text-gray-700'
+                            >
+                                Эзэмшсэн мэргэжил
+                            </label>
+                            <input
+                                type='text'
+                                id='job'
+                                name='job'
+                                value={newHRData.job}
+                                onChange={handleInputChange}
+                                className='mt-1 p-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                            />
+                        </div>
+                        <div>
+                            <label
+                                htmlFor='email'
+                                className='block text-sm font-medium text-gray-700'
+                            >
+                                Голч дүн
+                            </label>
+                            <input
+                                type='text'
+                                id='gpa'
+                                name='gpa'
+                                value={newHRData.gpa}
+                                onChange={handleInputChange}
+                                className='mt-1 p-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                            />
+                        </div>
+                        <div></div>
 
-                {!isItInfo && (
-                    <div className='flex-grow-0 md:flex-grow lg:flex-grow xl:flex-grow'>
-                        <Button onClick={handleSubmit} className='w-full h-12'>
-                            <span>저장</span>
-                        </Button>
+                        <div className='w-full'>
+                            Мэргэжлээрээ болон бусад чиглэлээр хамрагдаж байсан сургалтууд
+                        </div>
+                        <div></div>
+                        <div>
+                            <label
+                                htmlFor='email'
+                                className='block text-sm font-medium text-gray-700'
+                            >
+                                Сургалтын нэр
+                            </label>
+                            <input
+                                type='text'
+                                id='courseName'
+                                name='courseName'
+                                value={newHRData.courseName}
+                                onChange={handleInputChange}
+                                className='mt-1 p-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                            />
+                        </div>
+
+                        <div>
+                            <label
+                                htmlFor='email'
+                                className='block text-sm font-medium text-gray-700'
+                            >
+                                Эхэлсэн огноо
+                            </label>
+                            <input
+                                type='date'
+                                id='courseStartDate'
+                                name='courseStartDate'
+                                value={newHRData.courseStartDate}
+                                onChange={handleInputChange}
+                                className='mt-1 p-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                            />
+                        </div>
+                        <div>
+                            <label
+                                htmlFor='email'
+                                className='block text-sm font-medium text-gray-700'
+                            >
+                                Төгссөн огноо
+                            </label>
+                            <input
+                                type='date'
+                                id='courseEndDate'
+                                name='courseEndDate'
+                                value={newHRData.courseEndDate}
+                                onChange={handleInputChange}
+                                className='mt-1 p-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                            />
+                        </div>
+                        <div>
+                            <label
+                                htmlFor='email'
+                                className='block text-sm font-medium text-gray-700'
+                            >
+                                Эзэмшсэн ур чадвар
+                            </label>
+                            <input
+                                type='text'
+                                id='acquiredSkill'
+                                name='acquiredSkill'
+                                value={newHRData.acquiredSkill}
+                                onChange={handleInputChange}
+                                className='mt-1 p-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                            />
+                        </div>
+
+                        <div>
+                            <label
+                                htmlFor='email'
+                                className='block text-sm font-medium text-gray-700'
+                            >
+                                Сургалтын байгууллагын нэр
+                            </label>
+                            <input
+                                type='text'
+                                id='companyName'
+                                name='companyName'
+                                value={newHRData.companyName}
+                                onChange={handleInputChange}
+                                className='mt-1 p-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                            />
+                        </div>
+
+                        <div></div>
+
+                        <div className='w-full'>Гадаад хэлний мэдлэг</div>
+                        <div></div>
+
+                        <div>
+                            <label
+                                htmlFor='email'
+                                className='block text-sm font-medium text-gray-700'
+                            >
+                                Хэл
+                            </label>
+                            <input
+                                type='text'
+                                id='languageName'
+                                name='languageName'
+                                value={newHRData.languageName}
+                                onChange={handleInputChange}
+                                className='mt-1 p-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                            />
+                        </div>
+
+                        <div>
+                            <label
+                                htmlFor='email'
+                                className='block text-sm font-medium text-gray-700'
+                            >
+                                Унших
+                            </label>
+                            <input
+                                type='text'
+                                id='reading'
+                                name='reading'
+                                value={newHRData.reading}
+                                onChange={handleInputChange}
+                                className='mt-1 p-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                            />
+                        </div>
+
+                        <div>
+                            <label
+                                htmlFor='email'
+                                className='block text-sm font-medium text-gray-700'
+                            >
+                                Сонсох
+                            </label>
+                            <input
+                                type='text'
+                                id='listening'
+                                name='listening'
+                                value={newHRData.listening}
+                                onChange={handleInputChange}
+                                className='mt-1 p-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                            />
+                        </div>
+
+                        <div>
+                            <label
+                                htmlFor='email'
+                                className='block text-sm font-medium text-gray-700'
+                            >
+                                Бичих
+                            </label>
+                            <input
+                                type='text'
+                                id='writing'
+                                name='writing'
+                                value={newHRData.writing}
+                                onChange={handleInputChange}
+                                className='mt-1 p-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                            />
+                        </div>
+
+                        <div>
+                            <label
+                                htmlFor='email'
+                                className='block text-sm font-medium text-gray-700'
+                            >
+                                Ярих
+                            </label>
+                            <input
+                                type='text'
+                                id='speaking'
+                                name='speaking'
+                                value={newHRData.speaking}
+                                onChange={handleInputChange}
+                                className='mt-1 p-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                            />
+                        </div>
+
+                        <div></div>
+
+                        <div className='w-full'>Ажлын туршлага</div>
+                        <div></div>
+
+                        <div>
+                            <label
+                                htmlFor='email'
+                                className='block text-sm font-medium text-gray-700'
+                            >
+                                Байгууллага
+                            </label>
+                            <input
+                                type='text'
+                                id='company'
+                                name='company'
+                                value={newHRData.company}
+                                onChange={handleInputChange}
+                                className='mt-1 p-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                            />
+                        </div>
+
+                        <div>
+                            <label
+                                htmlFor='email'
+                                className='block text-sm font-medium text-gray-700'
+                            >
+                                Албан тушаал
+                            </label>
+                            <input
+                                type='text'
+                                id='role'
+                                name='role'
+                                value={newHRData.role}
+                                onChange={handleInputChange}
+                                className='mt-1 p-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                            />
+                        </div>
+
+                        <div>
+                            <label
+                                htmlFor='email'
+                                className='block text-sm font-medium text-gray-700'
+                            >
+                                Орсон огноо
+                            </label>
+                            <input
+                                type='date'
+                                id='workStartDate'
+                                name='workStartDate'
+                                value={newHRData.workStartDate}
+                                onChange={handleInputChange}
+                                className='mt-1 p-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                            />
+                        </div>
+
+                        <div>
+                            <label
+                                htmlFor='email'
+                                className='block text-sm font-medium text-gray-700'
+                            >
+                                Гарсан огноо
+                            </label>
+                            <input
+                                type='date'
+                                id='workEndDate'
+                                name='workEndDate'
+                                value={newHRData.workEndDate}
+                                onChange={handleInputChange}
+                                className='mt-1 p-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                            />
+                        </div>
+
+                        <div>
+                            <label
+                                htmlFor='email'
+                                className='block text-sm font-medium text-gray-700'
+                            >
+                                Гарсан шалтгаан
+                            </label>
+                            <input
+                                type='text'
+                                id='quitJobReason'
+                                name='quitJobReason'
+                                value={newHRData.quitJobReason}
+                                onChange={handleInputChange}
+                                className='mt-1 p-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                            />
+                        </div>
+
+                        <div></div>
+
+                        {/* Add more fields as needed */}
                     </div>
-                )}
-            </div>
-        </form>
+                    <div className='mt-4'>
+                        {/* Submit Button */}
+                        <button
+                            type='submit'
+                            className='inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
+                        >
+                            Шинэ ажил горилогч нэмэх
+                        </button>
+                    </div>
+                </form>
+            </CardBody>
+        </Card>
     );
 }

@@ -38,42 +38,26 @@ function UsersTable({ customers }) {
                 {customers?.map((user) => (
                     <TableRow key={user.id + 'usertablerow'}>
                         <TableCell>
-                            <span className='font-semibold uppercase text-xs'> {user?.id}</span>
+                            <span className='font-semibold uppercase text-xs'> {user?._id}</span>
                         </TableCell>
                         <TableCell>
-                            <span className='text-sm'>{user?.name}</span>
+                            <span className='text-sm'>{user?.lastName}</span>
+                        </TableCell>
+                        <TableCell>
+                            <span className='text-sm'>{user?.firstName}</span>
                         </TableCell>
                         <TableCell>
                             <span className='text-sm'>{user?.email}</span>{' '}
                         </TableCell>
                         <TableCell>
-                            <span className='text-sm font-medium'>
-                                {user?.walletAddress &&
-                                    user?.walletAddress?.substring(0, 18) + '...'}
-                            </span>
-                        </TableCell>
-                        <TableCell>
-                            <span className='text-sm'>
-                                {dayjs(user?.createdDate).format('MMM D, YYYY')}
-                            </span>
+                            <span className='text-sm font-medium'>{user?.phoneNumber}</span>
                         </TableCell>
 
                         <TableCell>
                             <div className='flex justify-end text-right'>
-                                <div className='p-2 cursor-pointer text-gray-400 hover:text-emerald-600'>
-                                    <p
-                                        data-tip
-                                        data-for={user?.id}
-                                        className='text-xl'
-                                        onClick={() => handleShow(user?.id)}
-                                    >
-                                        <FiZoomIn />
-                                    </p>
-                                </div>
-
                                 <EditDeleteButton
                                     title={user?.name}
-                                    id={user?.id}
+                                    id={user?._id}
                                     edittingRowInfo={user}
                                     handleUpdate={handleUpdate}
                                     openDeleteModal={() => openModal(user)}

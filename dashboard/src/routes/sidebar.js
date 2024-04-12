@@ -14,35 +14,27 @@ import { LuBaggageClaim } from 'react-icons/lu';
  */
 const sidebar = [
     {
-        path: '/dashboard', // the url
-        icon: FiGrid, // icon
-        name: 'Dashboard', // name that appear in Sidebar
-    },
-    {
         path: '/admins',
         icon: FiUser,
         name: 'Админууд',
     },
     {
+        path: '/hr',
+        icon: FiUser,
+        name: 'Хүний нөөцийн менежер',
+    },
+    {
         path: '/customers',
         icon: FiUsers,
-        name: 'Энгийн хэрэглэгч',
+        name: 'Ажил горилогч',
     },
+
     {
-        path: '/categories',
-        icon: LiaCoinsSolid,
-        name: 'Категор',
-    },
-    {
-        path: '/places',
+        path: '/interview',
         icon: GiPlatform,
-        name: 'Байршил',
+        name: 'Ажлын ярилцлага авах',
     },
-    {
-        path: '/assets',
-        icon: LiaCoinsSolid,
-        name: 'Захиалга',
-    },
+
     // {
     //     path: '/events',
     //     icon: SiEventstore,

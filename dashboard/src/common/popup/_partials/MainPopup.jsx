@@ -51,7 +51,7 @@ function MainPopup({
                             </GhostBtn>
                         )}
                         {footerAction2 && footerText2 && (
-                            <Btn onClick={() => footerAction2()}>{footerText2}</Btn>
+                            <Btn onClick={footerAction2}>{footerText2}</Btn>
                         )}
                     </div>
                 </MainPopupFooter>

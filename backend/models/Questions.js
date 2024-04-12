@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const questionSchema = new mongoose.Schema({
-    interviewId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    interviewId: { type: mongoose.Schema.Types.ObjectId, ref: "Candidate" },
     candidateId: String,
     date: Date,
     resultId: { type: [String], default: [] },

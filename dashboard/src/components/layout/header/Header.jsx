@@ -334,7 +334,9 @@ function Header() {
                                         aria-hidden='true'
                                     />
                                 ) : (
-                                    <span>{authState?.email[0].toUpperCase()}</span>
+                                    <span>
+                                        {authState?.email && authState?.email[0]?.toUpperCase()}
+                                    </span>
                                 )}
                             </button>
 

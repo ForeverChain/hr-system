@@ -19,7 +19,7 @@ instance.interceptors.request.use((config) => {
     if (Cookies.get(CookieName.TOKEN)) {
         accessToken = Cookies.get(CookieName.TOKEN);
     }
-
+    console.log('accessToken', accessToken);
     let company;
 
     if (Cookies.get('company')) {

@@ -1,11 +1,10 @@
 const mongoose = require("mongoose");
 
 const interviewSchema = new mongoose.Schema({
-    interviewId: { type: mongoose.Schema.Types.ObjectId, ref: "Interview" },
-    candidateId: { type: mongoose.Schema.Types.ObjectId, ref: "Candidate" },
+    candidateId: { type: mongoose.Schema.Types.ObjectId, ref: "Candidate", required: true },
     date: { type: Date, default: Date.now },
     resultId: [{ type: mongoose.Schema.Types.ObjectId, ref: "Result" }],
-    hrOfficerId: { type: mongoose.Schema.Types.ObjectId, ref: "HR" },
+    hr: { type: mongoose.Schema.Types.ObjectId, ref: "HR", required: true },
 });
 
 const InterViewModel = mongoose.model("interView", interviewSchema);

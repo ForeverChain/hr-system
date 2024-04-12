@@ -62,7 +62,7 @@ function SidebarContent() {
                 <Button onClick={handleLogOut} size='large' className='w-full'>
                     <span className='flex items-center'>
                         <IoLogOutOutline className='mr-3 text-lg' />
-                        <span className='text-sm'>Log Out</span>
+                        <span className='text-sm'>Системээс гарах</span>
                     </span>
                 </Button>
             </span>

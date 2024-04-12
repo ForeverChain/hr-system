@@ -21,28 +21,25 @@ export default function DeleteAdminPopup() {
 
     return (
         <MainPopup
-            title='관리자 삭제'
+            title='Админ устгах'
             footerAction1={hidePopup}
-            footerText1='취소'
-            footerAction2={() => deleteUserFunction(popupState?.deletingAdminInfo?.id)}
-            footerText2='삭제'
+            footerText1='Болих'
+            footerAction2={() => deleteUserFunction(popupState?.deletingAdminInfo?._id)}
+            footerText2='Устгах'
             minWidth={500}
         >
             <div className='flex flex-col gap-1'>
                 <div className='flex gap-2'>
                     <div className='min-w-[100px]'>ID</div>
-                    <div>{popupState?.deletingAdminInfo?.id}</div>
+                    <div>{popupState?.deletingAdminInfo?._id}</div>
                 </div>
                 <div className='flex gap-2'>
-                    <div className='min-w-[100px]'>이름</div>
-                    <div>{popupState?.deletingAdminInfo?.name}</div>
+                    <div className='min-w-[100px]'>Админ нэр</div>
+                    <div>{popupState?.deletingAdminInfo?.userName}</div>
                 </div>
-                <div className='flex gap-2'>
-                    <div className='min-w-[100px]'>이메일</div>
-                    <div>{popupState?.deletingAdminInfo?.email}</div>
-                </div>
+
                 <p className=' text-red-600 text-center mt-5 text-lg font-semibold'>
-                    해당 관리자를 삭제 하시겠습니까?
+                    Устгахдаа итгэлтэй байна уу?
                 </p>
             </div>
         </MainPopup>

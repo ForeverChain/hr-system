@@ -55,7 +55,7 @@ const getListFiles = async (req, res) => {
     try {
         await mongoClient.connect();
 
-        const database = mongoClient.db("test");
+        const database = mongoClient.db("hr-system");
         const images = database.collection(process.env.imgBucket + ".files");
 
         const cursor = images.find({});

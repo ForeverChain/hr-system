@@ -4,12 +4,15 @@ const UsersContext = createContext({});
 
 function UsersProvider({ children }) {
     const [usersList, setUsersList] = useState(null);
+    const [hrList, setHrList] = useState(null);
     const [usersExportList, setUsersExportList] = useState(null);
     const [usersDetail, setUsersDetail] = useState(null);
 
     return (
         <UsersContext.Provider
             value={{
+                hrList,
+                setHrList,
                 usersList,
                 setUsersList,
                 usersDetail,

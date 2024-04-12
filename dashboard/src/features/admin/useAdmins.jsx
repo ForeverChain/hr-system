@@ -11,7 +11,7 @@ export default function useAdmins() {
         try {
             const res = await AdminServices.getAllStaff({ searchText: searchingText, page })
                 .then((res) => {
-                    setAdminsList(res?.result?.content);
+                    setAdminsList(res?.data);
                     setTotalElement(res?.result?.totalElements);
                     return res;
                 })
@@ -29,9 +29,8 @@ export default function useAdmins() {
         try {
             const res = await AdminServices.getStaffById(id, body)
                 .then((res) => {
-                    if (res?.message === 'success') {
-                        setAdminDetail(res?.result);
-                    }
+                    console.log(res);
+                    setAdminDetail(res?.data);
                     return res;
                 })
                 .catch((err) => {
@@ -57,7 +56,7 @@ export default function useAdmins() {
             const res = await AdminServices.getDashboardData()
                 .then((res) => {
                     if (res?.message === 'success') {
-                        setDashboardData(res?.result);
+                        setDashboardData(res?.data);
                     }
                     return res;
                 })
@@ -107,6 +106,7 @@ export default function useAdmins() {
 
     async function addAdmin(body) {
         try {
+            console.log('body', body);
             const res = await AdminServices.addStaff(body)
                 .then((res) => {
                     return res;

@@ -5,7 +5,13 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Admin = require("./models/Admin.js");
 const Candidate = require("./models/Candidate.js");
-const Questions = require("./models/Questions.js");
+const Interview = require("./models/Interview.js");
+const HrOfficer = require("./models/HrOfficer.js");
+const Result = require("./models/Result.js");
+const Education = require("./models/Education.js");
+const ForeignLanguage = require("./models/ForeignLanguage.js");
+const WorkExperience = require("./models/WorkExperience.js");
+const Course = require("./models/Course.js");
 const cookieParser = require("cookie-parser");
 // const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 const multer = require("multer");
@@ -159,15 +165,47 @@ function getUserDataFromReq(req) {
         }
     });
 }
+app.post("/api/admin/login", async (req, res) => {
+    try {
+        mongoose.connect(process.env.MONGO_URL);
+        const { userName, password } = req.body;
+        const adminDoc = await Admin.findOne({ userName }); // Corrected variable name to adminDoc
+        if (adminDoc) {
+            const passOk = bcrypt.compareSync(password, adminDoc.password); // Compare password using bcrypt
+            if (passOk) {
+                jwt.sign(
+                    {
+                        userName: adminDoc.userName, // Corrected to adminDoc.userName
+                        id: adminDoc._id,
+                    },
+                    jwtSecret,
+                    {},
+                    (err, token) => {
+                        if (err) {
+                            return res.status(500).json({ error: err.message });
+                        }
+                        res.status(200).json({ data: { admin: adminDoc, token } }); // Corrected to adminDoc
+                    }
+                );
+            } else {
+                res.status(422).json("Password incorrect"); // Corrected response message
+            }
+        } else {
+            res.status(404).json({ message: "Admin not found" }); // Corrected response message
+        }
+    } catch (e) {
+        console.error("Error:", e);
+        return res.status(500).json({ error: "Internal Server Error" });
+    }
+});
 
-app.post("/api/register", async (req, res) => {
+app.post("/api/admin/register", async (req, res) => {
     mongoose.connect(process.env.MONGO_URL);
-    const { name, email, password } = req.body;
+    const { userName, password } = req.body;
 
     try {
-        const data = await User.create({
-            name,
-            email,
+        const data = await Admin.create({
+            userName,
             password: bcrypt.hashSync(password, bcryptSalt),
         });
         res.json({ data });
@@ -176,11 +214,57 @@ app.post("/api/register", async (req, res) => {
     }
 });
 
+app.post("/api/register", async (req, res) => {
+    mongoose.connect(process.env.MONGO_URL);
+    const { userName, email, password } = req.body;
+
+    try {
+        const data = await HrOfficer.create({
+            userName,
+            password: bcrypt.hashSync(password, bcryptSalt),
+        });
+        res.json({ data });
+    } catch (e) {
+        res.status(422).json(e);
+    }
+});
+
+app.get("/api/admins", async (req, res) => {
+    mongoose.connect(process.env.MONGO_URL);
+    const authHeader = req.headers.authorization;
+    if (authHeader) {
+        const token = authHeader.split(" ")[1];
+
+        jwt.verify(token, jwtSecret, async (err, user) => {
+            if (err) {
+                return res.sendStatus(403);
+            }
+
+            try {
+                let query = {}; // Initialize an empty query object
+                if (req.query.searchWord) {
+                    // If userName is provided in query params, add it to the query object
+                    query.userName = req.query.searchWord;
+                }
+
+                const data = await Admin.find(query); // Use the query object to filter the results
+                res.status(200).json({ data });
+            } catch (error) {
+                // Handle any errors that occur during database query or response sending
+                console.error(error);
+                res.status(500).send("Internal Server Error");
+            }
+        });
+    } else {
+        res.sendStatus(401);
+    }
+});
+
 app.post("/api/login", async (req, res) => {
     try {
         mongoose.connect(process.env.MONGO_URL);
-        const { email, password } = req.body;
-        const userDoc = await User.findOne({ email });
+        const { userName, password } = req.body;
+        const userDoc = await HrOfficer.findOne({ userName });
         if (userDoc) {
             const passOk = bcrypt.compareSync(password, userDoc.password);
             if (passOk) {
@@ -226,7 +310,7 @@ app.get("/api/profile", (req, res) => {
                     return res.status(500).json({ error: err }); // Sending error message as JSON
                 }
 
-                const { name, email, _id } = await User.findById(userData.id);
+                const { name, email, _id } = await Admin.findById(userData.id);
                 const data = { name, email, _id };
 
                 res.status(200).json({ data });
@@ -271,7 +355,7 @@ app.get("/api/user-places", (req, res) => {
     }
 });
 
-app.get("/api/users", async (req, res) => {
+app.get("/api/hr", async (req, res) => {
     mongoose.connect(process.env.MONGO_URL);
     const authHeader = req.headers.authorization;
     if (authHeader) {
@@ -283,7 +367,13 @@ app.get("/api/users", async (req, res) => {
             }
 
             try {
-                const data = await User.find();
+                let query = {}; // Initialize an empty query object
+                if (req.query.searchWord) {
+                    // If userName is provided in query params, add it to the query object
+                    query.userName = req.query.searchWord;
+                }
+
+                const data = await HrOfficer.find(query); // Use the query object to filter the results
                 res.status(200).json({ data });
             } catch (error) {
                 // Handle any errors that occur during database query or response sending
@@ -296,10 +386,554 @@ app.get("/api/users", async (req, res) => {
     }
 });
 
-app.get("/api/places/:id", async (req, res) => {
+app.delete("/api/admins/:id", async (req, res) => {
+    try {
+        const deletedAdmin = await Admin.findByIdAndDelete(req.params.id);
+        if (!deletedAdmin) {
+            return res.status(404).json({ message: "Admin not found" });
+        }
+        res.json({ message: "Admin deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.post("/api/interview", upload.none(), async (req, res) => {
+    console.log("here");
     mongoose.connect(process.env.MONGO_URL);
-    const { id } = req.params;
-    const data = await Place.findById(id);
+    const authHeader = req.headers.authorization;
+    if (authHeader) {
+        const token = authHeader.split(" ")[1];
+
+        jwt.verify(token, jwtSecret, async (err, user) => {
+            if (err) {
+                return res.sendStatus(403);
+            }
+
+            try {
+                // Assuming req.body contains the necessary data for creating a new HR entry
+                const { candidateId, hrOfficerId, talkingSkill, appearance, advantage, disadvantage, skills } = req.body;
+
+                // Create a new HR officer instance
+                const newInterview = new Interview({
+                    hr: hrOfficerId,
+                    candidateId: candidateId,
+                    date: new Date(),
+                });
+
+                await newInterview.save();
+
+                const rate = (parseInt(talkingSkill) + parseInt(appearance) + parseInt(advantage) + parseInt(disadvantage) + parseInt(skills)) / 5;
+
+                const result = new Result({
+                    interViewQuestionId: newInterview._id,
+                    talkingSkill: talkingSkill,
+                    appearance: appearance,
+                    advantage: advantage,
+                    disadvantage: disadvantage,
+                    skills: skills,
+                    rate: rate,
+                });
+
+                await result.save();
+
+                newInterview.resultId.push(result._id);
+                await newInterview.save();
+
+                res.status(201).json({ message: "HR officer created successfully" });
+            } catch (error) {
+                // Handle any errors that occur during database query or response sending
+                console.error(error);
+                res.status(500).send("Internal Server Error");
+            }
+        });
+    } else {
+        res.sendStatus(401);
+    }
+});
+
+app.delete("/api/interview/:id", async (req, res) => {
+    try {
+        const deletedAdmin = await Interview.findByIdAndDelete(req.params.id);
+        if (!deletedAdmin) {
+            return res.status(404).json({ message: "Interview not found" });
+        }
+        res.json({ message: "Interview deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.get("/api/interview/:id", async (req, res) => {
+    try {
+        const interview = await Interview.findById(req.params.id).populate("candidateId").populate("hr").populate("resultId");
+        if (!interview) {
+            return res.status(404).json({ message: "interview not found" });
+        }
+        res.json({ data: interview });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Update interview endpoint
+app.put("/api/interview/:id", upload.none(), async (req, res) => {
+    try {
+        const interviewId = req.params.id;
+        const { talkingSkill, appearance, advantage, disadvantage, skills } = req.body;
+
+        // Find the interview by ID
+        const interview = await Interview.findById(interviewId);
+
+        if (!interview) {
+            return res.status(404).json({ message: "Interview not found" });
+        }
+
+        // Update interview data
+        interview.talkingSkill = talkingSkill;
+        interview.appearance = appearance;
+        interview.advantage = advantage;
+        interview.disadvantage = disadvantage;
+        interview.skills = skills;
+
+        // Recalculate rate
+        const rate = (talkingSkill + appearance + advantage + disadvantage + skills) / 5;
+
+        // Update result associated with the interview
+        const result = await Result.findOne({ interViewQuestionId: interviewId });
+
+        if (!result) {
+            return res.status(404).json({ message: "Result not found" });
+        }
+
+        result.talkingSkill = talkingSkill;
+        result.appearance = appearance;
+        result.advantage = advantage;
+        result.disadvantage = disadvantage;
+        result.skills = skills;
+        result.rate = rate;
+
+        // Save changes
+        await interview.save();
+        await result.save();
+
+        res.json({ message: "Interview updated successfully" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Internal Server Error");
+    }
+});
+
+app.post("/api/admins", upload.none(), async (req, res) => {
+    mongoose.connect(process.env.MONGO_URL);
+    const authHeader = req.headers.authorization;
+    if (authHeader) {
+        const token = authHeader.split(" ")[1];
+
+        jwt.verify(token, jwtSecret, async (err, user) => {
+            if (err) {
+                return res.sendStatus(403);
+            }
+
+            try {
+                // Assuming req.body contains the necessary data for creating a new HR entry
+                const { userName, password } = req.body;
+
+                const hashedPassword = bcrypt.hashSync(password, bcryptSalt);
+
+                // Create a new HR officer instance
+                const newHrOfficer = new Admin({
+                    userName,
+                    password: hashedPassword,
+                });
+
+                await newHrOfficer.save();
+
+                res.status(201).json({ message: "HR officer created successfully" });
+            } catch (error) {
+                // Handle any errors that occur during database query or response sending
+                console.error(error);
+                res.status(500).send("Internal Server Error");
+            }
+        });
+    } else {
+        res.sendStatus(401);
+    }
+});
+
+app.put("/api/admins/:id", upload.none(), async (req, res) => {
+    mongoose.connect(process.env.MONGO_URL);
+    const authHeader = req.headers.authorization;
+
+    if (authHeader) {
+        const token = authHeader.split(" ")[1];
+
+        jwt.verify(token, jwtSecret, async (err, user) => {
+            if (err) {
+                return res.sendStatus(403);
+            }
+
+            try {
+                // Assuming req.body contains the updated data for the HR officer
+                const { userName, password } = req.body;
+                const hashedPassword = bcrypt.hashSync(password, bcryptSalt);
+
+                // Find the HR officer by ID
+                const hrOfficer = await Admin.findById(req.params.id);
+
+                if (!hrOfficer) {
+                    return res.status(404).json({ message: "HR officer not found" });
+                }
+
+                // Update HR officer's information
+                hrOfficer.userName = userName;
+                hrOfficer.password = hashedPassword;
+
+                // Save the updated HR officer
+                await hrOfficer.save();
+
+                res.status(200).json({ message: "HR officer updated successfully" });
+            } catch (error) {
+                // Handle any errors that occur during database query or response sending
+                console.error(error);
+                res.status(500).send("Internal Server Error");
+            }
+        });
+    } else {
+        res.sendStatus(401);
+    }
+});
+
+app.post("/api/hr", upload.none(), async (req, res) => {
+    mongoose.connect(process.env.MONGO_URL);
+    const authHeader = req.headers.authorization;
+    if (authHeader) {
+        const token = authHeader.split(" ")[1];
+
+        jwt.verify(token, jwtSecret, async (err, user) => {
+            if (err) {
+                return res.sendStatus(403);
+            }
+
+            try {
+                // Assuming req.body contains the necessary data for creating a new HR entry
+                const { userName, password } = req.body;
+
+                const hashedPassword = bcrypt.hashSync(password, bcryptSalt);
+
+                // Create a new HR officer instance
+                const newHrOfficer = new HrOfficer({
+                    userName,
+                    password: hashedPassword,
+                });
+
+                await newHrOfficer.save();
+
+                res.status(201).json({ message: "HR officer created successfully" });
+            } catch (error) {
+                // Handle any errors that occur during database query or response sending
+                console.error(error);
+                res.status(500).send("Internal Server Error");
+            }
+        });
+    } else {
+        res.sendStatus(401);
+    }
+});
+
+// Update HR officer endpoint
+app.put("/api/hr/:id", upload.none(), async (req, res) => {
+    try {
+        const hrOfficerId = req.params.id;
+        const { userName, password } = req.body;
+
+        // Find the HR officer by ID
+        const hrOfficer = await HrOfficer.findById(hrOfficerId);
+
+        if (!hrOfficer) {
+            return res.status(404).json({ message: "HR officer not found" });
+        }
+
+        // Update HR officer data
+        hrOfficer.userName = userName;
+
+        if (password) {
+            const hashedPassword = bcrypt.hashSync(password, bcryptSalt);
+            hrOfficer.password = hashedPassword;
+        }
+
+        // Save changes
+        await hrOfficer.save();
+
+        res.json({ message: "HR officer updated successfully" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Internal Server Error");
+    }
+});
+
+app.delete("/api/hr/:id", async (req, res) => {
+    try {
+        const deletedHr = await HrOfficer.findByIdAndDelete(req.params.id);
+        if (!deletedHr) {
+            return res.status(404).json({ message: "Hr not found" });
+        }
+        res.json({ message: "Hr deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.get("/api/hr/:id", async (req, res) => {
+    try {
+        const hr = await HrOfficer.findById(req.params.id);
+        if (!hr) {
+            return res.status(404).json({ message: "Hr not found" });
+        }
+        res.json({ data: hr });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.get("/api/admins/:id", async (req, res) => {
+    try {
+        const hr = await Admin.findById(req.params.id);
+        if (!hr) {
+            return res.status(404).json({ message: "Admin not found" });
+        }
+        res.json({ data: hr });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.post("/api/candidate", async (req, res) => {
+    mongoose.connect(process.env.MONGO_URL);
+    const authHeader = req.headers.authorization;
+    if (authHeader) {
+        const token = authHeader.split(" ")[1];
+
+        jwt.verify(token, jwtSecret, async (err, user) => {
+            if (err) {
+                return res.sendStatus(403);
+            }
+
+            try {
+                // Assuming req.body contains the necessary data for creating a new HR entry
+                // Create a new HR officer instance
+                const newCandidate = new Candidate({
+                    firstName: req.body.firstName,
+                    lastName: req.body.lastName,
+                    email: req.body.email,
+                    phoneNumber: req.body.phoneNumber,
+                });
+
+                await newCandidate.save();
+
+                const newEducation = new Education({
+                    country: req.body.country,
+                    school: req.body.school,
+                    educationDegrees: req.body.educationDegrees,
+                    startDate: req.body.educationStartDate,
+                    endDate: req.body.educationEndDate,
+                    job: req.body.job,
+                    gpa: req.body.gpa,
+                });
+
+                await newEducation.save();
+
+                newCandidate.education.push(newEducation._id);
+
+                const newCourse = new Course({
+                    courseName: req.body.courseName,
+                    startDate: req.body.courseStartDate,
+                    endDate: req.body.courseEndDate,
+                    acquiredSkill: req.body.acquiredSkill,
+                    companyName: req.body.companyName,
+                });
+
+                await newCourse.save();
+
+                newCandidate.courses.push(newCourse._id);
+
+                const newForeignLangauge = new ForeignLanguage({
+                    languageName: req.body.languageName,
+                    reading: req.body.reading,
+                    listening: req.body.listening,
+                    writing: req.body.writing,
+                    speaking: req.body.speaking,
+                });
+
+                await newForeignLangauge.save();
+
+                newCandidate.foreignLanguages.push(newForeignLangauge._id);
+
+                const newWorkExperience = new WorkExperience({
+                    company: req.body.company,
+                    role: req.body.role,
+                    startDate: req.body.workStartDate,
+                    endDate: req.body.workEndDate,
+                    quitJobReason: req.body.quitJobReason,
+                });
+
+                await newWorkExperience.save();
+
+                newCandidate.workExperiences.push(newWorkExperience._id);
+
+                await newCandidate.save();
+
+                res.status(201).json({ message: "Candidate created successfully" });
+            } catch (error) {
+                // Handle any errors that occur during database query or response sending
+                console.error(error);
+                res.status(500).send("Internal Server Error");
+            }
+        });
+    } else {
+        res.sendStatus(401);
+    }
+});
+
+// Update candidate endpoint
+app.put("/api/candidate/:id", async (req, res) => {
+    try {
+        const candidateId = req.params.id;
+
+        // Find the candidate by ID
+        const candidate = await Candidate.findById(candidateId);
+
+        if (!candidate) {
+            return res.status(404).json({ message: "Candidate not found" });
+        }
+
+        // Update candidate data
+        candidate.firstName = req.body.firstName || candidate.firstName;
+        candidate.lastName = req.body.lastName || candidate.lastName;
+        candidate.email = req.body.email || candidate.email;
+        candidate.phoneNumber = req.body.phoneNumber || candidate.phoneNumber;
+
+        // Update candidate's education
+        const education = await Education.findOneAndUpdate(
+            { _id: { $in: candidate.education } },
+            {
+                country: req.body.country || education.country,
+                school: req.body.school || education.school,
+                educationDegrees: req.body.educationDegrees || education.educationDegrees,
+                startDate: req.body.educationStartDate || education.startDate,
+                endDate: req.body.educationEndDate || education.endDate,
+                job: req.body.job || education.job,
+                gpa: req.body.gpa || education.gpa,
+            },
+            { new: true }
+        );
+
+        // Update candidate's courses
+        const course = await Course.findOneAndUpdate(
+            { _id: { $in: candidate.courses } },
+            {
+                courseName: req.body.courseName || course.courseName,
+                startDate: req.body.courseStartDate || course.startDate,
+                endDate: req.body.courseEndDate || course.endDate,
+                acquiredSkill: req.body.acquiredSkill || course.acquiredSkill,
+                companyName: req.body.companyName || course.companyName,
+            },
+            { new: true }
+        );
+
+        // Update candidate's foreign languages
+        const foreignLanguage = await ForeignLanguage.findOneAndUpdate(
+            { _id: { $in: candidate.foreignLanguages } },
+            {
+                languageName: req.body.languageName || foreignLanguage.languageName,
+                reading: req.body.reading || foreignLanguage.reading,
+                listening: req.body.listening || foreignLanguage.listening,
+                writing: req.body.writing || foreignLanguage.writing,
+                speaking: req.body.speaking || foreignLanguage.speaking,
+            },
+            { new: true }
+        );
+
+        // Update candidate's work experiences
+        const workExperience = await WorkExperience.findOneAndUpdate(
+            { _id: { $in: candidate.workExperiences } },
+            {
+                company: req.body.company || workExperience.company,
+                role: req.body.role || workExperience.role,
+                startDate: req.body.workStartDate || workExperience.startDate,
+                endDate: req.body.workEndDate || workExperience.endDate,
+                quitJobReason: req.body.quitJobReason || workExperience.quitJobReason,
+            },
+            { new: true }
+        );
+
+        // Save changes
+        await candidate.save();
+
+        res.json({ message: "Candidate updated successfully" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Internal Server Error");
+    }
+});
+
+app.get("/api/candidate", async (req, res) => {
+    mongoose.connect(process.env.MONGO_URL);
+    const authHeader = req.headers.authorization;
+    if (authHeader) {
+        const token = authHeader.split(" ")[1];
+
+        jwt.verify(token, jwtSecret, async (err, user) => {
+            if (err) {
+                return res.sendStatus(403);
+            }
+
+            try {
+                let query = {}; // Initialize an empty query object
+                if (req.query.searchWord) {
+                    // If userName is provided in query params, add it to the query object
+                    query.firstName = req.query.searchWord;
+                }
+                const data = await Candidate.find(query).populate("education").populate("courses").populate("workExperiences").populate("foreignLanguages");
+                res.status(200).json({ data });
+            } catch (error) {
+                // Handle any errors that occur during database query or response sending
+                console.error(error);
+                res.status(500).send("Internal Server Error");
+            }
+        });
+    } else {
+        res.sendStatus(401);
+    }
+});
+
+app.delete("/api/candidate/:id", async (req, res) => {
+    try {
+        const deletedCandidate = await Candidate.findByIdAndDelete(req.params.id);
+        if (!deletedCandidate) {
+            return res.status(404).json({ message: "Candidate not found" });
+        }
+        res.json({ message: "Candidate deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.get("/api/candidate/:id", async (req, res) => {
+    try {
+        const candidate = await Candidate.findById(req.params.id);
+        if (!candidate) {
+            return res.status(404).json({ message: "Candidate not found" });
+        }
+        res.json({ data: candidate });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.get("/api/interview", async (req, res) => {
+    mongoose.connect(process.env.MONGO_URL);
+    const data = await Interview.find().populate("candidateId").populate("hr").populate("resultId");
     res.json({ data });
 });
 

@@ -9,7 +9,7 @@ import {
     DrawerRowWrapper,
 } from '@/common/drawer/_partials/drawerParts';
 import { useDrawerCtx } from '@/common/drawer/useDrawerCtx';
-import useClaims, { claimProcessStatus } from '../../place/useClaims';
+import useClaims, { claimProcessStatus } from '../../interview/useClaims';
 import Btn, { OutlineBtn } from '@/components/ui/button/Button';
 import ClaimServices from '../ClaimsServices';
 import { notifyError, notifySuccess } from '@/utils/toast';

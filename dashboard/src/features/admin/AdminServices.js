@@ -9,6 +9,11 @@ const AdminServices = {
     },
 
     loginAdmin: async (body) => {
+        const res = await requests.post('/admin/login', body);
+        return res;
+    },
+
+    loginHr: async (body) => {
         const res = await requests.post('/login', body);
         return res;
     },
@@ -44,6 +49,7 @@ const AdminServices = {
     },
 
     updateStaff: async (id, body) => {
+        console.log('here is', id);
         return requests.put(`/admins/${id}`, body);
     },
 
