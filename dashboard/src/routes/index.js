@@ -4,6 +4,7 @@ import { lazy } from 'react';
 const Dashboard = lazy(() => import('@/features/dashboard/DashboardPage'));
 const UsersPage = lazy(() => import('@/features/user/UsersPage'));
 const InterviewPage = lazy(() => import('@/features/interview/InterviewPage'));
+const RatingPage = lazy(() => import('@/features/rating/InterviewPage'));
 const Page404 = lazy(() => import('@/features/404'));
 const ComingSoon = lazy(() => import('@/features/ComingSoon'));
 const EditProfile = lazy(() => import('@/features/user/profile/EditProfile'));
@@ -52,6 +53,11 @@ const routes = [
         path: '/interview',
         component: InterviewPage,
     },
+    {
+        path: '/rating',
+        component: RatingPage,
+    },
+
     {
         path: '/events',
         component: EventsPage,

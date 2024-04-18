@@ -14,7 +14,7 @@ import InputPassword from '@/components/ui/form/elements/input/InputPassword';
 import ImageViewer from '@/components/ui/form/elements/input/file/ImageViewer';
 import { useAdminCtx } from '../useAdminCtx';
 import { useGlobalCtx } from '@/common/global/useGlobalCtx';
-
+import { toast } from 'react-toastify';
 export default function AdminDrawerFormEdit({ id }) {
     const { toggleDrawer, isDrawerOpen } = useContext(SidebarContext);
     const { updateAdminDetail, getAllAdminsList } = useAdmins();
@@ -39,9 +39,10 @@ export default function AdminDrawerFormEdit({ id }) {
 
         updateAdminDetail(id, payload)
             .then((res) => {
-                if (res.message === 'success') {
+                if (res.status === 'success') {
                     toggleDrawer();
                     getAllAdminsList();
+                    toast('Successfully', { type: 'success' });
                 }
             })
             .catch((err) => {

@@ -310,7 +310,7 @@ app.get("/api/profile", (req, res) => {
                     return res.status(500).json({ error: err }); // Sending error message as JSON
                 }
 
-                const { name, email, _id } = await Admin.findById(userData.id);
+                const { name, email, _id } = await Admin.findById(userData?.id);
                 const data = { name, email, _id };
 
                 res.status(200).json({ data });
@@ -386,13 +386,13 @@ app.get("/api/hr", async (req, res) => {
     }
 });
 
-app.delete("/api/admins/:id", async (req, res) => {
+app.delete("/api/admins/:id", upload.none(), async (req, res) => {
     try {
         const deletedAdmin = await Admin.findByIdAndDelete(req.params.id);
         if (!deletedAdmin) {
             return res.status(404).json({ message: "Admin not found" });
         }
-        res.json({ message: "Admin deleted successfully" });
+        res.json({ message: "Admin deleted successfully", status: "success" });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -412,7 +412,7 @@ app.post("/api/interview", upload.none(), async (req, res) => {
 
             try {
                 // Assuming req.body contains the necessary data for creating a new HR entry
-                const { candidateId, hrOfficerId, talkingSkill, appearance, advantage, disadvantage, skills } = req.body;
+                const { candidateId, hrOfficerId, talkingSkill, appearance, advantage, disadvantage, skills, generalConclusion, goodAblity } = req.body;
 
                 // Create a new HR officer instance
                 const newInterview = new Interview({
@@ -431,6 +431,8 @@ app.post("/api/interview", upload.none(), async (req, res) => {
                     appearance: appearance,
                     advantage: advantage,
                     disadvantage: disadvantage,
+                    generalConclusion: generalConclusion,
+                    goodAblity: goodAblity,
                     skills: skills,
                     rate: rate,
                 });
@@ -440,7 +442,7 @@ app.post("/api/interview", upload.none(), async (req, res) => {
                 newInterview.resultId.push(result._id);
                 await newInterview.save();
 
-                res.status(201).json({ message: "HR officer created successfully" });
+                res.status(201).json({ message: "HR officer created successfully", status: "success" });
             } catch (error) {
                 // Handle any errors that occur during database query or response sending
                 console.error(error);
@@ -480,7 +482,7 @@ app.get("/api/interview/:id", async (req, res) => {
 app.put("/api/interview/:id", upload.none(), async (req, res) => {
     try {
         const interviewId = req.params.id;
-        const { talkingSkill, appearance, advantage, disadvantage, skills } = req.body;
+        const { talkingSkill, appearance, advantage, disadvantage, skills, generalConclusion, goodAblity } = req.body;
 
         // Find the interview by ID
         const interview = await Interview.findById(interviewId);
@@ -512,6 +514,8 @@ app.put("/api/interview/:id", upload.none(), async (req, res) => {
         result.disadvantage = parseInt(disadvantage);
         result.skills = parseInt(skills);
         result.rate = parseInt(rate);
+        result.generalConclusion = generalConclusion;
+        result.goodAblity = goodAblity;
 
         // Save changes
         await interview.save();
@@ -549,7 +553,7 @@ app.post("/api/admins", upload.none(), async (req, res) => {
 
                 await newHrOfficer.save();
 
-                res.status(201).json({ message: "HR officer created successfully" });
+                res.status(201).json({ message: "HR officer created successfully", status: "success" });
             } catch (error) {
                 // Handle any errors that occur during database query or response sending
                 console.error(error);
@@ -592,7 +596,7 @@ app.put("/api/admins/:id", upload.none(), async (req, res) => {
                 // Save the updated HR officer
                 await hrOfficer.save();
 
-                res.status(200).json({ message: "HR officer updated successfully" });
+                res.status(200).json({ message: "HR officer updated successfully", status: "success" });
             } catch (error) {
                 // Handle any errors that occur during database query or response sending
                 console.error(error);
@@ -629,7 +633,7 @@ app.post("/api/hr", upload.none(), async (req, res) => {
 
                 await newHrOfficer.save();
 
-                res.status(201).json({ message: "HR officer created successfully" });
+                res.status(201).json({ message: "HR officer created successfully", status: "success" });
             } catch (error) {
                 // Handle any errors that occur during database query or response sending
                 console.error(error);
@@ -665,7 +669,7 @@ app.put("/api/hr/:id", upload.none(), async (req, res) => {
         // Save changes
         await hrOfficer.save();
 
-        res.json({ message: "HR officer updated successfully" });
+        res.json({ message: "HR officer updated successfully", status: "success" });
     } catch (error) {
         console.error(error);
         res.status(500).send("Internal Server Error");
@@ -678,7 +682,7 @@ app.delete("/api/hr/:id", async (req, res) => {
         if (!deletedHr) {
             return res.status(404).json({ message: "Hr not found" });
         }
-        res.json({ message: "Hr deleted successfully" });
+        res.json({ message: "Hr deleted successfully", status: "success" });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -708,7 +712,7 @@ app.get("/api/admins/:id", async (req, res) => {
     }
 });
 
-app.post("/api/candidate", async (req, res) => {
+app.post("/api/candidate", upload.none(), async (req, res) => {
     mongoose.connect(process.env.MONGO_URL);
     const authHeader = req.headers.authorization;
     if (authHeader) {
@@ -729,8 +733,6 @@ app.post("/api/candidate", async (req, res) => {
                     phoneNumber: req.body.phoneNumber,
                 });
 
-                await newCandidate.save();
-
                 const newEducation = new Education({
                     country: req.body.country,
                     school: req.body.school,
@@ -743,8 +745,6 @@ app.post("/api/candidate", async (req, res) => {
 
                 await newEducation.save();
 
-                newCandidate.education.push(newEducation._id);
-
                 const newCourse = new Course({
                     courseName: req.body.courseName,
                     startDate: req.body.courseStartDate,
@@ -754,8 +754,6 @@ app.post("/api/candidate", async (req, res) => {
                 });
 
                 await newCourse.save();
-
-                newCandidate.courses.push(newCourse._id);
 
                 const newForeignLangauge = new ForeignLanguage({
                     languageName: req.body.languageName,
@@ -767,8 +765,6 @@ app.post("/api/candidate", async (req, res) => {
 
                 await newForeignLangauge.save();
 
-                newCandidate.foreignLanguages.push(newForeignLangauge._id);
-
                 const newWorkExperience = new WorkExperience({
                     company: req.body.company,
                     role: req.body.role,
@@ -778,12 +774,14 @@ app.post("/api/candidate", async (req, res) => {
                 });
 
                 await newWorkExperience.save();
-
+                newCandidate.education.push(newEducation._id);
+                newCandidate.courses.push(newCourse._id);
+                newCandidate.foreignLanguages.push(newForeignLangauge._id);
                 newCandidate.workExperiences.push(newWorkExperience._id);
 
                 await newCandidate.save();
 
-                res.status(201).json({ message: "Candidate created successfully" });
+                res.status(201).json({ message: "Candidate created successfully", status: "success" });
             } catch (error) {
                 // Handle any errors that occur during database query or response sending
                 console.error(error);
@@ -796,7 +794,7 @@ app.post("/api/candidate", async (req, res) => {
 });
 
 // Update candidate endpoint
-app.put("/api/candidate/:id", async (req, res) => {
+app.put("/api/candidate/:id", upload.none(), async (req, res) => {
     try {
         const candidateId = req.params.id;
 
@@ -812,18 +810,19 @@ app.put("/api/candidate/:id", async (req, res) => {
         candidate.lastName = req.body.lastName || candidate.lastName;
         candidate.email = req.body.email || candidate.email;
         candidate.phoneNumber = req.body.phoneNumber || candidate.phoneNumber;
+        candidate.isSelected = req.body.isSelected || candidate.isSelected;
 
         // Update candidate's education
         const education = await Education.findOneAndUpdate(
             { _id: { $in: candidate.education } },
             {
-                country: req.body.country || education.country,
-                school: req.body.school || education.school,
-                educationDegrees: req.body.educationDegrees || education.educationDegrees,
-                startDate: req.body.educationStartDate || education.startDate,
-                endDate: req.body.educationEndDate || education.endDate,
-                job: req.body.job || education.job,
-                gpa: req.body.gpa || education.gpa,
+                country: req.body.country || candidate.education.country,
+                school: req.body.school || candidate.education.school,
+                educationDegrees: req.body.educationDegrees || candidate.education.educationDegrees,
+                startDate: req.body.educationStartDate || candidate.education.startDate,
+                endDate: req.body.educationEndDate || candidate.education.endDate,
+                job: req.body.job || candidate.education.job,
+                gpa: req.body.gpa || candidate.education.gpa,
             },
             { new: true }
         );
@@ -832,11 +831,11 @@ app.put("/api/candidate/:id", async (req, res) => {
         const course = await Course.findOneAndUpdate(
             { _id: { $in: candidate.courses } },
             {
-                courseName: req.body.courseName || course.courseName,
-                startDate: req.body.courseStartDate || course.startDate,
-                endDate: req.body.courseEndDate || course.endDate,
-                acquiredSkill: req.body.acquiredSkill || course.acquiredSkill,
-                companyName: req.body.companyName || course.companyName,
+                courseName: req.body.courseName || candidate.courses.courseName,
+                startDate: req.body.courseStartDate || candidate.courses.startDate,
+                endDate: req.body.courseEndDate || candidate.courses.endDate,
+                acquiredSkill: req.body.acquiredSkill || candidate.courses.acquiredSkill,
+                companyName: req.body.companyName || candidate.courses.companyName,
             },
             { new: true }
         );
@@ -845,11 +844,11 @@ app.put("/api/candidate/:id", async (req, res) => {
         const foreignLanguage = await ForeignLanguage.findOneAndUpdate(
             { _id: { $in: candidate.foreignLanguages } },
             {
-                languageName: req.body.languageName || foreignLanguage.languageName,
-                reading: req.body.reading || foreignLanguage.reading,
-                listening: req.body.listening || foreignLanguage.listening,
-                writing: req.body.writing || foreignLanguage.writing,
-                speaking: req.body.speaking || foreignLanguage.speaking,
+                languageName: req.body.languageName || candidate.foreignLanguages.languageName,
+                reading: req.body.reading || candidate.foreignLanguages.reading,
+                listening: req.body.listening || candidate.foreignLanguages.listening,
+                writing: req.body.writing || candidate.foreignLanguages.writing,
+                speaking: req.body.speaking || candidate.foreignLanguages.speaking,
             },
             { new: true }
         );
@@ -858,19 +857,20 @@ app.put("/api/candidate/:id", async (req, res) => {
         const workExperience = await WorkExperience.findOneAndUpdate(
             { _id: { $in: candidate.workExperiences } },
             {
-                company: req.body.company || workExperience.company,
-                role: req.body.role || workExperience.role,
-                startDate: req.body.workStartDate || workExperience.startDate,
-                endDate: req.body.workEndDate || workExperience.endDate,
-                quitJobReason: req.body.quitJobReason || workExperience.quitJobReason,
+                company: req.body.company || candidate.workExperiences.company,
+                role: req.body.role || candidate.workExperiences.role,
+                startDate: req.body.workStartDate || candidate.workExperiences.startDate,
+                endDate: req.body.workEndDate || candidate.workExperiences.endDate,
+                quitJobReason: req.body.quitJobReason || candidate.workExperiences.quitJobReason,
             },
             { new: true }
         );
 
         // Save changes
+        console.log(candidate);
         await candidate.save();
 
-        res.json({ message: "Candidate updated successfully" });
+        res.json({ message: "Candidate updated successfully", status: "success" });
     } catch (error) {
         console.error(error);
         res.status(500).send("Internal Server Error");
@@ -913,7 +913,7 @@ app.delete("/api/candidate/:id", async (req, res) => {
         if (!deletedCandidate) {
             return res.status(404).json({ message: "Candidate not found" });
         }
-        res.json({ message: "Candidate deleted successfully" });
+        res.json({ message: "Candidate deleted successfully", status: "success" });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -921,7 +921,7 @@ app.delete("/api/candidate/:id", async (req, res) => {
 
 app.get("/api/candidate/:id", async (req, res) => {
     try {
-        const candidate = await Candidate.findById(req.params.id);
+        const candidate = await Candidate.findById(req.params.id).populate("education").populate("courses").populate("workExperiences").populate("foreignLanguages");
         if (!candidate) {
             return res.status(404).json({ message: "Candidate not found" });
         }
@@ -948,8 +948,14 @@ app.get("/api/interview", async (req, res) => {
                     // If userName is provided in query params, add it to the query object
                     query.userName = req.query.searchWord;
                 }
-                if (req.query.searchWord == "") {
-                    const data = await Interview.find(query).populate("candidateId").populate("hr").populate("resultId");
+                if (req.query.searchWord == "" || !req.query.searchWord) {
+                    const data = await Interview.find(query)
+                        .populate({
+                            path: "candidateId",
+                            populate: [{ path: "education" }, { path: "foreignLanguages" }, { path: "workExperiences" }, { path: "courses" }],
+                        })
+                        .populate("hr")
+                        .populate("resultId");
                     return res.status(200).json({ data });
                 }
                 const data = await Interview.aggregate([
@@ -964,6 +970,40 @@ app.get("/api/interview", async (req, res) => {
                     {
                         $unwind: "$candidate",
                     },
+
+                    {
+                        $lookup: {
+                            from: "educations", // Assuming 'educations' is your education collection
+                            localField: "candidate.education",
+                            foreignField: "_id",
+                            as: "candidate.education",
+                        },
+                    },
+                    {
+                        $lookup: {
+                            from: "courses", // Assuming 'educations' is your education collection
+                            localField: "candidate.courses",
+                            foreignField: "_id",
+                            as: "candidate.courses",
+                        },
+                    },
+                    {
+                        $lookup: {
+                            from: "workexperiences", // Assuming 'educations' is your education collection
+                            localField: "candidate.workExperiences",
+                            foreignField: "_id",
+                            as: "candidate.workExperiences",
+                        },
+                    },
+                    {
+                        $lookup: {
+                            from: "foreignlanguages", // Assuming 'educations' is your education collection
+                            localField: "candidate.foreignLanguages",
+                            foreignField: "_id",
+                            as: "candidate.foreignLanguages",
+                        },
+                    },
+
                     {
                         $lookup: {
                             from: "hrs",
@@ -989,6 +1029,127 @@ app.get("/api/interview", async (req, res) => {
                     {
                         $match: {
                             "candidate.firstName": req.query.searchWord,
+                        },
+                    },
+                    {
+                        $project: {
+                            candidateId: "$candidate",
+                            hr: "$hr",
+                            resultId: ["$result"],
+                            date: 1,
+                            __v: 1,
+                        },
+                    },
+                ]);
+
+                return res.status(200).json({ data });
+            } catch (error) {
+                // Handle any errors that occur during database query or response sending
+                console.error(error);
+                res.status(500).send("Internal Server Error");
+            }
+        });
+    } else {
+        res.sendStatus(401);
+    }
+});
+
+app.get("/api/interviewByResult", async (req, res) => {
+    mongoose.connect(process.env.MONGO_URL);
+    const authHeader = req.headers.authorization;
+    if (authHeader) {
+        const token = authHeader.split(" ")[1];
+
+        jwt.verify(token, jwtSecret, async (err, user) => {
+            if (err) {
+                return res.sendStatus(403);
+            }
+
+            try {
+                let query = {}; // Initialize an empty query object
+                if (req.query.searchWord) {
+                    // If rate is provided in query params, add it to the query object
+                    query.rate = req.query.searchWord;
+                }
+                if (req.query.searchWord == "" || !req.query.searchWord) {
+                    const data = await Interview.find(query)
+                        .populate({
+                            path: "candidateId",
+                            populate: [{ path: "education" }, { path: "foreignLanguages" }, { path: "workExperiences" }, { path: "courses" }],
+                        })
+                        .populate("hr")
+                        .populate("resultId");
+                    return res.status(200).json({ data });
+                }
+                const data = await Interview.aggregate([
+                    {
+                        $lookup: {
+                            from: "candidates",
+                            localField: "candidateId",
+                            foreignField: "_id",
+                            as: "candidate",
+                        },
+                    },
+                    {
+                        $unwind: "$candidate",
+                    },
+                    {
+                        $lookup: {
+                            from: "educations", // Assuming 'educations' is your education collection
+                            localField: "candidate.education",
+                            foreignField: "_id",
+                            as: "candidate.education",
+                        },
+                    },
+                    {
+                        $lookup: {
+                            from: "courses", // Assuming 'educations' is your education collection
+                            localField: "candidate.courses",
+                            foreignField: "_id",
+                            as: "candidate.courses",
+                        },
+                    },
+                    {
+                        $lookup: {
+                            from: "workexperiences", // Assuming 'educations' is your education collection
+                            localField: "candidate.workExperiences",
+                            foreignField: "_id",
+                            as: "candidate.workExperiences",
+                        },
+                    },
+                    {
+                        $lookup: {
+                            from: "foreignlanguages", // Assuming 'educations' is your education collection
+                            localField: "candidate.foreignLanguages",
+                            foreignField: "_id",
+                            as: "candidate.foreignLanguages",
+                        },
+                    },
+                    {
+                        $lookup: {
+                            from: "hrs",
+                            localField: "hr",
+                            foreignField: "_id",
+                            as: "hr",
+                        },
+                    },
+                    {
+                        $unwind: "$hr",
+                    },
+                    {
+                        $lookup: {
+                            from: "results",
+                            localField: "resultId",
+                            foreignField: "_id",
+                            as: "result",
+                        },
+                    },
+                    {
+                        $unwind: "$result",
+                    },
+                    {
+                        $match: {
+                            "result.rate": parseFloat(req.query.searchWord), // Convert searchWord to float
                         },
                     },
                     {

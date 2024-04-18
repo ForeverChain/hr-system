@@ -14,6 +14,7 @@ import InputPassword from '@/components/ui/form/elements/input/InputPassword';
 import ImageViewer from '@/components/ui/form/elements/input/file/ImageViewer';
 import { useAdminCtx } from '../useAdminCtx';
 import { useGlobalCtx } from '@/common/global/useGlobalCtx';
+import { toast } from 'react-toastify';
 
 const initialFormData = {
     image: { value: null, error: null },
@@ -38,7 +39,8 @@ export default function AdminDrawerForm({ id }) {
 
         addAdmin(payload)
             .then((res) => {
-                if (res.message === 'success') {
+                if (res.status === 'success') {
+                    toast('Successfully', { type: 'success' });
                     toggleDrawer();
                     getAllAdminsList();
                 }

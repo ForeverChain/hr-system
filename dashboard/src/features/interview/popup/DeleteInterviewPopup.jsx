@@ -1,16 +1,22 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import MainPopup from '@/common/popup/_partials/MainPopup';
-import { usePopupCtx } from '@/common/popup/usePopupCtx';
 import usePlace from '../usePlace';
+import useAdmins from '../useAdmins';
+import { SidebarContext } from '@/components/layout/sidebar/SidebarContext';
+import { usePopupCtx } from '@/common/popup/usePopupCtx';
 
 export default function DeleteInterviewPopup() {
     const { hidePopup, hideAllPopups, popupState } = usePopupCtx();
     const { deleteAdmin } = usePlace();
+    const { updateAdminDetail, getAllAdminsList } = useAdmins();
+    const { toggleDrawer, isDrawerOpen } = useContext(SidebarContext);
 
     function deleteUserFunction(id) {
         deleteAdmin(id)
             .then((res) => {
-                if (res.message === 'success') {
+                if (res.status === 'success') {
+                    toggleDrawer();
+                    getAllAdminsList();
                     hideAllPopups();
                 }
             })

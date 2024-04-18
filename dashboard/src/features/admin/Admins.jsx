@@ -24,6 +24,7 @@ import InputText from '@/components/ui/form/elements/input/InputText';
 import TablePagination from '@/components/ui/pagination/TablePagination';
 import useAdmins from './useAdmins';
 import { useAdminCtx } from './useAdminCtx';
+import { toast } from 'react-toastify';
 
 export default function Admins() {
     const { getAllAdminsList } = useAdmins();
@@ -97,22 +98,19 @@ export default function Admins() {
                 // ) : error ? (
                 //     <span className='text-center mx-auto text-red-500'>{error}</span>
                 // ) :
-                serviceData?.length !== 0 ? (
-                    <TableContainer className='mb-8'>
-                        <Table>
-                            <TableHeader>
-                                <tr>
-                                    <TableCell>ID</TableCell>
-                                    <TableCell>Админ нэр</TableCell>
-                                    <TableCell className='text-right'>Үйлдэлүүд</TableCell>
-                                </tr>
-                            </TableHeader>
-                            <AdminTable admins={dataTable} />
-                        </Table>
-                    </TableContainer>
-                ) : (
-                    <NotFound title='데이터 없음.' />
-                )
+
+                <TableContainer className='mb-8'>
+                    <Table>
+                        <TableHeader>
+                            <tr>
+                                <TableCell>ID</TableCell>
+                                <TableCell>Админ нэр</TableCell>
+                                <TableCell className='text-right'>Үйлдэлүүд</TableCell>
+                            </tr>
+                        </TableHeader>
+                        <AdminTable admins={dataTable} />
+                    </Table>
+                </TableContainer>
             }
         </>
     );

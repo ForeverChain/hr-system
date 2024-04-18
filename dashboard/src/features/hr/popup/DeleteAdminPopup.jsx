@@ -2,16 +2,20 @@ import React from 'react';
 import MainPopup from '@/common/popup/_partials/MainPopup';
 import { usePopupCtx } from '@/common/popup/usePopupCtx';
 import useAdmins from '../useAdmins';
+import { toast } from 'react-toastify';
 
 export default function DeleteAdminPopup() {
     const { hidePopup, hideAllPopups, popupState } = usePopupCtx();
     const { deleteAdmin } = useAdmins();
+    const { addAdmin, getAllAdminsList } = useAdmins();
 
     function deleteUserFunction(id) {
         deleteAdmin(id)
             .then((res) => {
-                if (res.message === 'success') {
+                if (res.status === 'success') {
+                    toast('Successfully', { type: 'success' });
                     hideAllPopups();
+                    getAllAdminsList();
                 }
             })
             .catch((err) => {

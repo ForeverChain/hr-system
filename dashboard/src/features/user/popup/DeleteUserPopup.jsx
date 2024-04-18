@@ -2,15 +2,18 @@ import React from 'react';
 import MainPopup from '@/common/popup/_partials/MainPopup';
 import { usePopupCtx } from '@/common/popup/usePopupCtx';
 import useUsers from '../useUsers';
+import { toast } from 'react-toastify';
 
 export default function DeleteUserPopup() {
     const { hidePopup, hideAllPopups, popupState } = usePopupCtx();
-    const { deleteUser } = useUsers();
+    const { deleteUser, getAllCustomersList } = useUsers();
 
     function deleteUserFunction(id) {
         deleteUser(id)
             .then((res) => {
-                if (res.message === 'success') {
+                if (res.status === 'success') {
+                    toast('Successfully', { type: 'success' });
+                    getAllCustomersList();
                     hideAllPopups();
                 }
             })

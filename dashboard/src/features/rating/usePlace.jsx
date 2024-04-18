@@ -19,6 +19,7 @@ export default function usePlace() {
         try {
             const res = await PlaceServices.getAllStaff({ searchText: searchingText, page })
                 .then((res) => {
+                    console.log('res data', res?.data);
                     setPlaceList(res?.data);
                     return res;
                 })

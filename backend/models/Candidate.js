@@ -9,6 +9,7 @@ const candidateSchema = new mongoose.Schema({
     courses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Course" }],
     foreignLanguages: [{ type: mongoose.Schema.Types.ObjectId, ref: "ForeignLanguage" }],
     workExperiences: [{ type: mongoose.Schema.Types.ObjectId, ref: "WorkExperience" }],
+    isSelected: { type: Boolean, required: true, default: false },
 });
 
 const CandidateModel = mongoose.model("Candidate", candidateSchema);

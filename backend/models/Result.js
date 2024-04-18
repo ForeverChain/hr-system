@@ -8,6 +8,8 @@ const resultSchema = new mongoose.Schema({
     disadvantage: Number,
     skills: Number,
     rate: Number,
+    generalConclusion: String,
+    goodAblity: String,
 });
 
 const ResultModel = mongoose.model("Result", resultSchema);

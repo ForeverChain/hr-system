@@ -1,8 +1,9 @@
 import { FiGrid, FiUsers, FiUser } from 'react-icons/fi';
-import { GiPlatform } from 'react-icons/gi';
+import { GiPlatform, GiSelect } from 'react-icons/gi';
 import { SiEventstore } from 'react-icons/si';
 import { LiaCoinsSolid } from 'react-icons/lia';
 import { RiNftFill } from 'react-icons/ri';
+import { FcRating } from 'react-icons/fc';
 import { LuBaggageClaim } from 'react-icons/lu';
 
 /**
@@ -26,13 +27,18 @@ const sidebar = [
     {
         path: '/customers',
         icon: FiUsers,
-        name: 'Ажил горилогч',
+        name: 'Ажилчдын мэдээлэл',
     },
 
     {
         path: '/interview',
         icon: GiPlatform,
-        name: 'Ажлын ярилцлага авах',
+        name: 'Сонгон шалгаруулалт',
+    },
+    {
+        path: '/rating',
+        icon: FcRating,
+        name: 'Ажилчдын үнэлгээ',
     },
 
     // {
