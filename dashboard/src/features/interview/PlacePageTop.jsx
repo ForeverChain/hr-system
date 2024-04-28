@@ -108,7 +108,7 @@ function PlacePageTop() {
                                 <InputText
                                     value={searchingText}
                                     onChange={(e) => setSearchingText(e.target.value)}
-                                    placeholder='Админ нэрээр хайх'
+                                    placeholder='Ажил горилргчийн нэрээр хайх'
                                 />
                                 <button className='absolute right-0 top-0 mt-5 mr-1' />
                             </div>

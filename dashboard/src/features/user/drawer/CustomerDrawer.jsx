@@ -125,9 +125,9 @@ function CustomerDrawer({ id, isItInfo }) {
         <>
             <div className='w-full relative p-6 border-b border-gray-100 bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300'>
                 {isItInfo ? (
-                    <Title title={`Users/ ${id}`} />
+                    <Title title={`Ажил горилогч нэмэх`} />
                 ) : (
-                    <Title title={`Users/ ${id}/edit`} />
+                    <Title title={`Ажил горилогч засах`} />
                 )}
             </div>
             <Scrollbars className='w-full md:w-7/12 lg:w-8/12 xl:w-8/12 relative dark:bg-gray-700 dark:text-gray-200'>

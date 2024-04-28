@@ -48,7 +48,7 @@ function PlacesTable() {
             page: page - 1,
         };
         const res = await placeService.getPlaceList(payLoad);
-        setPlaceList(res);
+        setPlaceList(res.data);
     }
 
     function openModal(rowInfo) {
@@ -94,7 +94,7 @@ function PlacesTable() {
 
     const { toggleDrawer, isDrawerOpen } = useContext(SidebarContext);
 
-    console.log('serviceId', serviceId);
+    console.log('sortedPlaces', placeList);
     return (
         <>
             <MainDrawer>

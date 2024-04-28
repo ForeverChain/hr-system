@@ -29,7 +29,7 @@ function AdminsDrawer({ id }) {
                 {id ? (
                     <Title title='Хүний нөөц менежер засварлах' />
                 ) : (
-                    <Title title='Шинэ админ нэмэх' />
+                    <Title title='Шинэ Hr нэмэх' />
                 )}
             </div>
 

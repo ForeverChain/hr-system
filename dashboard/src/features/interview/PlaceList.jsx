@@ -3,12 +3,12 @@ import { Card } from '@windmill/react-ui';
 import placeService from './place.service';
 import ClaimsTable from './PlacesTable';
 import { usePlaceCtx } from './usePlaceCtx';
-
+import usePlace from './usePlace';
 function PlaceList() {
     const { isToggleReset, pagination, setPlaceList } = usePlaceCtx();
-
+    const { addInterview, getAllAdminsList } = usePlace();
     useEffect(() => {
-        placeService.getPlaceList().then((res) => setPlaceList(res?.data));
+        getAllAdminsList();
     }, [isToggleReset]);
 
     return (
