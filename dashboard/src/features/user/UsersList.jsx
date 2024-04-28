@@ -61,7 +61,7 @@ export default function UsersList() {
 
     return (
         <>
-            <PageTitle>Ажил горилогч</PageTitle>
+            <PageTitle>Ажилчдын мэдээлэл</PageTitle>
 
             <Card className='min-w-0 shadow-xs overflow-hidden bg-white dark:bg-gray-800 mb-5'>
                 <CardBody>
@@ -73,7 +73,7 @@ export default function UsersList() {
                             <InputText
                                 value={searchingText}
                                 onChange={(e) => setSearchingText(e.target.value)}
-                                placeholder='Админ нэрээр хайх'
+                                placeholder='Ажил горилогчийн нэрээр хайх'
                             />
                             <button className='absolute right-0 top-0 mt-5 mr-1' />
                         </div>
@@ -99,25 +99,21 @@ export default function UsersList() {
                 // ) : error ? (
                 //     <span className='text-center mx-auto text-red-500'>{error}</span>
                 // ) :
-                serviceData?.length !== 0 ? (
-                    <TableContainer className='mb-8'>
-                        <Table>
-                            <TableHeader>
-                                <tr>
-                                    <TableCell>ID</TableCell>
-                                    <TableCell>Овог</TableCell>
-                                    <TableCell>Нэр</TableCell>
-                                    <TableCell>Имэйл</TableCell>
-                                    <TableCell>Утасны дугаар</TableCell>
-                                    <TableCell className='text-right'>Үйлдэл</TableCell>
-                                </tr>
-                            </TableHeader>
-                            <CustomerTable customers={dataTable} />
-                        </Table>
-                    </TableContainer>
-                ) : (
-                    <NotFound title='데이터 없음.' />
-                )
+                <TableContainer className='mb-8'>
+                    <Table>
+                        <TableHeader>
+                            <tr>
+                                <TableCell>ID</TableCell>
+                                <TableCell>Овог</TableCell>
+                                <TableCell>Нэр</TableCell>
+                                <TableCell>Имэйл</TableCell>
+                                <TableCell>Утасны дугаар</TableCell>
+                                <TableCell className='text-right'>Үйлдэл</TableCell>
+                            </tr>
+                        </TableHeader>
+                        <CustomerTable customers={dataTable} />
+                    </Table>
+                </TableContainer>
             }
         </>
     );

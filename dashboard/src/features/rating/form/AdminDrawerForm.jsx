@@ -15,7 +15,6 @@ import ImageViewer from '@/components/ui/form/elements/input/file/ImageViewer';
 import { usePlaceCtx } from '../usePlaceCtx';
 import { useGlobalCtx } from '@/common/global/useGlobalCtx';
 import { useLocation } from 'react-router-dom';
-import { toast } from 'react-toastify';
 
 const initialFormData = {
     image: { value: null, error: null },
@@ -61,8 +60,7 @@ export default function AdminDrawerForm({ id }) {
 
         addInterview(payload)
             .then((res) => {
-                if (res.status === 'success') {
-                    toast('Successfully', { type: 'success' });
+                if (res.message === 'success') {
                     toggleDrawer();
                     getAllAdminsList();
                 }

@@ -14,17 +14,40 @@ import InputPassword from '@/components/ui/form/elements/input/InputPassword';
 import ImageViewer from '@/components/ui/form/elements/input/file/ImageViewer';
 import { useUsersCtx } from '../useUsersCtx';
 import { useGlobalCtx } from '@/common/global/useGlobalCtx';
-
-const initialFormData = {
-    image: { value: null, error: null },
-    userName: { value: null, error: null },
-    password: { value: null, error: null },
-};
+import { toast } from 'react-toastify';
 
 export default function AdminDrawerForm({ id }) {
     const { toggleDrawer, isDrawerOpen } = useContext(SidebarContext);
-    const { addAdmin, getAllAdminsList } = useUsers();
+    const { addHr, getAllCustomersList } = useUsers();
     const { drawerSubmitLoading, setDrawerSubmitLoading } = useGlobalCtx();
+    const [initialFormData, setInitialFormData] = useState({
+        lastName: { value: '', error: null },
+        firstName: { value: '', error: null },
+        email: { value: '', error: null },
+        phoneNumber: { value: '', error: null },
+        country: { value: '', error: null },
+        school: { value: '', error: null },
+        educationDegrees: { value: '', error: null },
+        educationStartDate: { value: '', error: null },
+        educationEndDate: { value: '', error: null },
+        job: { value: '', error: null },
+        gpa: { value: '', error: null },
+        courseName: { value: '', error: null },
+        courseStartDate: { value: '', error: null },
+        courseEndDate: { value: '', error: null },
+        acquiredSkill: { value: '', error: null },
+        companyName: { value: '', error: null },
+        languageName: { value: '', error: null },
+        reading: { value: '', error: null },
+        listening: { value: '', error: null },
+        writing: { value: '', error: null },
+        speaking: { value: '', error: null },
+        company: { value: '', error: null },
+        role: { value: '', error: null },
+        workStartDate: { value: '', error: null },
+        workEndDate: { value: '', error: null },
+        quitJobReason: { value: '', error: null },
+    });
 
     const { onChange, onError, formState, setValueField } = useForm(initialFormData);
 
@@ -33,14 +56,16 @@ export default function AdminDrawerForm({ id }) {
         setDrawerSubmitLoading(true);
         const payload = new FormData();
 
-        payload.append('userName', formState?.userName?.value);
-        payload.append('password', formState?.password?.value);
+        Object.entries(formState).forEach(([key, form]) => {
+            payload.append(key, form.value);
+        });
 
-        addAdmin(payload)
+        addHr(payload)
             .then((res) => {
-                if (res.message === 'success') {
+                if (res.status === 'success') {
+                    toast('Successfully', { type: 'success' });
                     toggleDrawer();
-                    getAllAdminsList();
+                    getAllCustomersList();
                 }
             })
             .catch((err) => {
@@ -515,30 +540,30 @@ export default function AdminDrawerForm({ id }) {
                         {/* Add more fields as needed */}
                     </div>
                 </form>
+                <div
+                    className='z-10 bottom-0 w-full right-0 py-4 lg:py-8 px-6 grid gap-4 lg:gap-6 xl:gap-6 md:flex xl:flex bg-gray-50 border-t border-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300'
+                    style={{ right: !isDrawerOpen && -50 }}
+                >
+                    <div className='flex-grow-0 md:flex-grow lg:flex-grow xl:flex-grow'>
+                        <Button
+                            onClick={toggleDrawer}
+                            className='h-12 bg-white w-full text-red-500 hover:bg-red-50 hover:border-red-100 hover:text-red-600 dark:bg-gray-700 dark:border-gray-700 dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-red-700'
+                            layout='outline'
+                        >
+                            Болих
+                        </Button>
+                    </div>
+                    <div className='flex-grow-0 md:flex-grow lg:flex-grow xl:flex-grow'>
+                        <Button
+                            onClick={submitForm}
+                            disabled={drawerSubmitLoading}
+                            className='w-full h-12'
+                        >
+                            <span>{drawerSubmitLoading ? '로드 중...' : 'Оруулах'}</span>
+                        </Button>
+                    </div>
+                </div>
             </CardBody>
-            <div
-                className='fixed z-10 bottom-0 w-full right-0 py-4 lg:py-8 px-6 grid gap-4 lg:gap-6 xl:gap-6 md:flex xl:flex bg-gray-50 border-t border-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300'
-                style={{ right: !isDrawerOpen && -50 }}
-            >
-                <div className='flex-grow-0 md:flex-grow lg:flex-grow xl:flex-grow'>
-                    <Button
-                        onClick={toggleDrawer}
-                        className='h-12 bg-white w-full text-red-500 hover:bg-red-50 hover:border-red-100 hover:text-red-600 dark:bg-gray-700 dark:border-gray-700 dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-red-700'
-                        layout='outline'
-                    >
-                        Болих
-                    </Button>
-                </div>
-                <div className='flex-grow-0 md:flex-grow lg:flex-grow xl:flex-grow'>
-                    <Button
-                        onClick={submitForm}
-                        disabled={drawerSubmitLoading}
-                        className='w-full h-12'
-                    >
-                        <span>{drawerSubmitLoading ? '로드 중...' : 'Оруулах'}</span>
-                    </Button>
-                </div>
-            </div>
         </form>
     );
 }

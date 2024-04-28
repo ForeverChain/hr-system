@@ -13,7 +13,7 @@ function InterviewPage() {
         <PlaceProvider>
             <PopupProvider>
                 <DrawerProvider>
-                    <PageTitle>Анкет авах</PageTitle>
+                    <PageTitle>Ажилчдын үнэлгээний хэсэг</PageTitle>
                     <FormProvider>
                         <DisplayDrawer />
                         <ClaimsPageTop />

@@ -37,7 +37,7 @@ const PlaceServices = {
         return requests.post('/interview', body);
     },
     getAllStaff: async ({ searchText = '', page = 0 }) => {
-        return requests.get(`/interview?searchWord=${searchText}&page=${page}`);
+        return requests.get(`/interviewByResult?searchWord=${searchText}&page=${page}`);
     },
     getAllCandidate: async ({ searchText = '', page = 0 }) => {
         return requests.get(`/candidate?searchWord=${searchText}&page=${page}`);

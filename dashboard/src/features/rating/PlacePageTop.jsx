@@ -15,6 +15,8 @@ import { usePopupCtx } from '@/common/popup/usePopupCtx';
 import { POPUP_TYPES } from '@/common/popup/popupRegistration';
 import usePlace from './usePlace';
 
+import Tooltip from '@/components/ui/tooltip/Tooltip';
+
 export const tokenTypes = {
     All: '전체 보기',
     AssetNFT: 'AssetNFT',
@@ -90,14 +92,6 @@ function PlacePageTop() {
     return (
         <>
             <Card className='min-w-0 shadow-xs overflow-hidden bg-white dark:bg-gray-800 mb-5'>
-                {/* <form className='py-3 grid gap-4 lg:gap-6 xl:gap-6 md:flex md:flex-col'>
-                        <div className='flex items-center gap-2 w-full'>
-                            <Btn onClick={openModal}>Шинээр ярилцлага эхлүүлэх</Btn>
-                        </div>
-
-                        
-                    </form> */}
-
                 <Card className='min-w-0 shadow-xs overflow-hidden bg-white dark:bg-gray-800 mb-5'>
                     <CardBody>
                         <form
@@ -108,20 +102,9 @@ function PlacePageTop() {
                                 <InputText
                                     value={searchingText}
                                     onChange={(e) => setSearchingText(e.target.value)}
-                                    placeholder='Ажил горилргчийн нэрээр хайх'
+                                    placeholder='Үнэлгээгээр хайх'
                                 />
                                 <button className='absolute right-0 top-0 mt-5 mr-1' />
-                            </div>
-                            <div className='flex items-center gap-2 flex-grow-0 md:flex-grow lg:flex-grow xl:flex-grow'>
-                                <div className='w-full mx-1'>
-                                    <button
-                                        type='button'
-                                        className='h-12 w-full bg-emerald-900 rounded-lg text-white'
-                                        onClick={(e) => handleUpdate(null)}
-                                    >
-                                        + Шинэ сонгон шалгаруулалт нэмэх
-                                    </button>
-                                </div>
                             </div>
                         </form>
                     </CardBody>

@@ -32,7 +32,7 @@ const CustomerServices = {
     },
 
     updateCustomer: async (id, body) => {
-        return requests.put(`/customers/${id}`, body);
+        return requests.put(`/candidate/${id}`, body);
     },
 
     deleteCustomer: async (id) => {

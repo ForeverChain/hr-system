@@ -104,32 +104,19 @@ export default function Admins() {
                     </form>
                 </CardBody>
             </Card>
-
-            {
-                // loading ? (
-                //     // <Loading loading={loading} />
-                //     <TableLoading row={12} col={6} width={190} height={20} />
-                // ) : error ? (
-                //     <span className='text-center mx-auto text-red-500'>{error}</span>
-                // ) :
-                serviceData?.length !== 0 ? (
-                    <TableContainer className='mb-8'>
-                        <Table>
-                            <TableHeader>
-                                <tr>
-                                    <TableCell>ID</TableCell>
-                                    <TableCell>Хэрэглэгчийн нэр</TableCell>
-                                    <TableCell>Хэрэглэгчийн нууц үг</TableCell>
-                                    <TableCell className='text-right'>Үйлдэл</TableCell>
-                                </tr>
-                            </TableHeader>
-                            <AdminTable admins={dataTable} />
-                        </Table>
-                    </TableContainer>
-                ) : (
-                    <NotFound title='데이터 없음.' />
-                )
-            }
+            <TableContainer className='mb-8'>
+                <Table>
+                    <TableHeader>
+                        <tr>
+                            <TableCell>ID</TableCell>
+                            <TableCell>Хэрэглэгчийн нэр</TableCell>
+                            <TableCell>Хэрэглэгчийн нууц үг</TableCell>
+                            <TableCell className='text-right'>Үйлдэл</TableCell>
+                        </tr>
+                    </TableHeader>
+                    <AdminTable admins={dataTable} />
+                </Table>
+            </TableContainer>
         </>
     );
 }

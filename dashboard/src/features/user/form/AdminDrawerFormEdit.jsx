@@ -14,38 +14,48 @@ import InputPassword from '@/components/ui/form/elements/input/InputPassword';
 import ImageViewer from '@/components/ui/form/elements/input/file/ImageViewer';
 import { useUsersCtx } from '../useUsersCtx';
 import { useGlobalCtx } from '@/common/global/useGlobalCtx';
+import { toast } from 'react-toastify';
 
 export default function AdminDrawerFormEdit({ id }) {
     const { toggleDrawer, isDrawerOpen } = useContext(SidebarContext);
-    const { updateAdminDetail, getAllAdminsList } = useUsers();
+    const { updateUser, getAllCustomersList } = useUsers();
     const { edittingRowInfo } = useGlobalCtx();
     const [initialFormData, setInitialFormData] = useState({
         lastName: { value: edittingRowInfo?.lastName || '', error: null },
         firstName: { value: edittingRowInfo?.firstName || '', error: null },
         email: { value: edittingRowInfo?.email || '', error: null },
         phoneNumber: { value: edittingRowInfo?.phoneNumber || '', error: null },
-        country: { value: edittingRowInfo?.country || '', error: null },
-        school: { value: edittingRowInfo?.school || '', error: null },
-        educationDegrees: { value: edittingRowInfo?.educationDegrees || '', error: null },
-        educationStartDate: { value: edittingRowInfo?.educationStartDate || '', error: null },
-        educationEndDate: { value: edittingRowInfo?.educationEndDate || '', error: null },
-        job: { value: edittingRowInfo?.job || '', error: null },
-        gpa: { value: edittingRowInfo?.gpa || '', error: null },
-        courseName: { value: edittingRowInfo?.courseName || '', error: null },
-        courseStartDate: { value: edittingRowInfo?.courseStartDate || '', error: null },
-        courseEndDate: { value: edittingRowInfo?.courseEndDate || '', error: null },
-        acquiredSkill: { value: edittingRowInfo?.acquiredSkill || '', error: null },
-        companyName: { value: edittingRowInfo?.companyName || '', error: null },
-        languageName: { value: edittingRowInfo?.languageName || '', error: null },
-        reading: { value: edittingRowInfo?.reading || '', error: null },
-        listening: { value: edittingRowInfo?.listening || '', error: null },
-        writing: { value: edittingRowInfo?.writing || '', error: null },
-        speaking: { value: edittingRowInfo?.speaking || '', error: null },
-        company: { value: edittingRowInfo?.company || '', error: null },
-        role: { value: edittingRowInfo?.role || '', error: null },
-        workStartDate: { value: edittingRowInfo?.workStartDate || '', error: null },
-        workEndDate: { value: edittingRowInfo?.workEndDate || '', error: null },
-        quitJobReason: { value: edittingRowInfo?.quitJobReason || '', error: null },
+        country: { value: edittingRowInfo?.education[0]?.country || '', error: null },
+        school: { value: edittingRowInfo?.education[0]?.school || '', error: null },
+        educationDegrees: {
+            value: edittingRowInfo?.education[0]?.educationDegrees || '',
+            error: null,
+        },
+        educationStartDate: { value: edittingRowInfo?.education[0]?.startDate || '', error: null },
+        educationEndDate: { value: edittingRowInfo?.education[0]?.endDate || '', error: null },
+        job: { value: edittingRowInfo?.education[0]?.job || '', error: null },
+        gpa: { value: edittingRowInfo?.education[0]?.gpa || '', error: null },
+        courseName: { value: edittingRowInfo?.courses[0]?.courseName || '', error: null },
+        courseStartDate: { value: edittingRowInfo?.courses[0]?.startDate || '', error: null },
+        courseEndDate: { value: edittingRowInfo?.courses[0]?.endDate || '', error: null },
+        acquiredSkill: { value: edittingRowInfo?.courses[0]?.acquiredSkill || '', error: null },
+        companyName: { value: edittingRowInfo?.courses[0]?.companyName || '', error: null },
+        languageName: {
+            value: edittingRowInfo?.foreignLanguages[0]?.languageName || '',
+            error: null,
+        },
+        reading: { value: edittingRowInfo?.foreignLanguages[0]?.reading || '', error: null },
+        listening: { value: edittingRowInfo?.foreignLanguages[0]?.listening || '', error: null },
+        writing: { value: edittingRowInfo?.foreignLanguages[0]?.writing || '', error: null },
+        speaking: { value: edittingRowInfo?.foreignLanguages[0]?.speaking || '', error: null },
+        company: { value: edittingRowInfo?.workExperiences[0]?.company || '', error: null },
+        role: { value: edittingRowInfo?.workExperiences[0]?.role || '', error: null },
+        workStartDate: { value: edittingRowInfo?.workExperiences[0]?.startDate || '', error: null },
+        workEndDate: { value: edittingRowInfo?.workExperiences[0]?.endDate || '', error: null },
+        quitJobReason: {
+            value: edittingRowInfo?.workExperiences[0]?.quitJobReason || '',
+            error: null,
+        },
     });
 
     const { userDetail } = useUsersCtx();
@@ -58,18 +68,22 @@ export default function AdminDrawerFormEdit({ id }) {
         setDrawerSubmitLoading(true);
         const payload = new FormData();
 
-        payload.append('userName', formState?.userName);
-        payload.append('password', formState?.password);
+        // Append form data to the payload
+        Object.entries(formState).forEach(([key, form]) => {
+            payload.append(key, form.value);
+        });
 
-        updateAdminDetail(id, payload)
+        updateUser(id, payload)
             .then((res) => {
-                if (res.message === 'success') {
+                if (res.status === 'success') {
+                    toast('Successfully', { type: 'success' });
                     toggleDrawer();
-                    getAllAdminsList();
+                    getAllCustomersList();
                 }
             })
             .catch((err) => {
                 console.error(err);
+                // Handle errors, maybe update state to show error message to the user
             })
             .finally(() => {
                 setDrawerSubmitLoading(false);
@@ -214,7 +228,12 @@ export default function AdminDrawerFormEdit({ id }) {
                                         type='date'
                                         id='educationStartDate'
                                         name='educationStartDate'
-                                        value={formState?.educationStartDate?.value}
+                                        value={
+                                            formState?.educationStartDate?.value &&
+                                            new Date(formState?.educationStartDate?.value)
+                                                .toISOString()
+                                                .split('T')[0]
+                                        }
                                         onChange={onChange}
                                         className='mt-1 p-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
                                     />
@@ -231,7 +250,12 @@ export default function AdminDrawerFormEdit({ id }) {
                                         type='date'
                                         id='educationEndDate'
                                         name='educationEndDate'
-                                        value={formState?.educationEndDate?.value}
+                                        value={
+                                            formState?.educationEndDate?.value &&
+                                            new Date(formState?.educationEndDate?.value)
+                                                .toISOString()
+                                                .split('T')[0]
+                                        }
                                         onChange={onChange}
                                         className='mt-1 p-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
                                     />
@@ -497,7 +521,12 @@ export default function AdminDrawerFormEdit({ id }) {
                                         type='date'
                                         id='workStartDate'
                                         name='workStartDate'
-                                        value={formState?.workStartDate?.value}
+                                        value={
+                                            formState?.workStartDate?.value &&
+                                            new Date(formState?.workStartDate?.value)
+                                                .toISOString()
+                                                .split('T')[0]
+                                        }
                                         onChange={onChange}
                                         className='mt-1 p-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
                                     />
@@ -514,7 +543,12 @@ export default function AdminDrawerFormEdit({ id }) {
                                         type='date'
                                         id='workEndDate'
                                         name='workEndDate'
-                                        value={formState?.workEndDate?.value}
+                                        value={
+                                            formState?.workEndDate?.value &&
+                                            new Date(formState?.workEndDate?.value)
+                                                .toISOString()
+                                                .split('T')[0]
+                                        }
                                         onChange={onChange}
                                         className='mt-1 p-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
                                     />
@@ -546,7 +580,7 @@ export default function AdminDrawerFormEdit({ id }) {
                 </Card>
             </div>
             <div
-                className='fixed z-10 bottom-0 w-full right-0 py-4 lg:py-8 px-6 grid gap-4 lg:gap-6 xl:gap-6 md:flex xl:flex bg-gray-50 border-t border-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300'
+                className='z-10 bottom-0 w-full right-0 py-4 lg:py-8 px-6 grid gap-4 lg:gap-6 xl:gap-6 md:flex xl:flex bg-gray-50 border-t border-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300'
                 style={{ right: !isDrawerOpen && -50 }}
             >
                 <div className='flex-grow-0 md:flex-grow lg:flex-grow xl:flex-grow'>

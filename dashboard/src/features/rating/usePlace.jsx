@@ -5,12 +5,13 @@ import { useGlobalCtx } from '@/common/global/useGlobalCtx';
 
 export default function usePlace() {
     const {
-        setPlaceList,
+        setAdminsList,
         setAdminDetail,
         setTotalElement,
         setDashboardData,
         setCandidateList,
         setHrList,
+        setPlaceList,
     } = usePlaceCtx();
     const { setAuthState } = useGlobalCtx();
 
@@ -18,6 +19,7 @@ export default function usePlace() {
         try {
             const res = await PlaceServices.getAllStaff({ searchText: searchingText, page })
                 .then((res) => {
+                    console.log('res data', res?.data);
                     setPlaceList(res?.data);
                     return res;
                 })
