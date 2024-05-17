@@ -177,6 +177,7 @@ app.post("/api/admin/login", async (req, res) => {
                     {
                         userName: adminDoc.userName, // Corrected to adminDoc.userName
                         id: adminDoc._id,
+                        userType: "1",
                     },
                     jwtSecret,
                     {},
@@ -272,6 +273,7 @@ app.post("/api/login", async (req, res) => {
                     {
                         email: userDoc.email,
                         id: userDoc._id,
+                        userType: "2",
                     },
                     jwtSecret,
                     {},
@@ -295,29 +297,42 @@ app.post("/api/login", async (req, res) => {
     }
 });
 
-app.get("/api/profile", (req, res) => {
+app.get("/api/profile", async (req, res) => {
     const authHeader = req.headers.authorization;
 
     if (authHeader) {
-        mongoose.connect(process.env.MONGO_URL);
-
         const token = authHeader.split(" ")[1];
 
         if (token) {
-            jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-                if (err) {
-                    // Sending an error response
-                    return res.status(500).json({ error: err }); // Sending error message as JSON
+            try {
+                const userData = jwt.verify(token, jwtSecret);
+
+                if (!userData || !userData.id) {
+                    return res.status(400).json({ error: "Invalid token" });
                 }
 
-                const { name, email, _id } = await Admin.findById(userData?.id);
-                const data = { name, email, _id };
+                let user = await Admin.findById(userData.id).lean();
+
+                if (!user) {
+                    user = await HrOfficer.findById(userData.id).lean();
+                }
+
+                if (!user) {
+                    return res.status(404).json({ error: "User not found" });
+                }
+
+                const { name, email, _id, userType } = user;
+                const data = { name, email, _id, userType };
 
                 res.status(200).json({ data });
-            });
+            } catch (err) {
+                res.status(500).json({ error: err.message });
+            }
+        } else {
+            res.status(400).json({ error: "Token is missing" });
         }
     } else {
-        res.json(null);
+        res.status(401).json({ error: "Authorization header is missing" });
     }
 });
 
