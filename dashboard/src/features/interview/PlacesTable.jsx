@@ -133,11 +133,11 @@ function PlacesTable() {
                 <TableHeader>
                     <tr>
                         <TableCell>Ажил горилигчын нэр</TableCell>
-                        <TableCell>Ярилцлага авсан өдөр</TableCell>
+                        {/* <TableCell>Ярилцлага авсан өдөр</TableCell> */}
                         <TableCell>Утас</TableCell>
                         <TableCell>Имэйл</TableCell>
 
-                        <TableCell>Ярилцлага авсан Hr</TableCell>
+                        {/* <TableCell>Ярилцлага авсан Hr</TableCell> */}
                         <TableCell className='text-right'>
                             <button onClick={() => handleSort('skills')}>
                                 Үйлдэлүүд{sortBy === 'skills' && (sortOrder === 'asc' ? '▲' : '▼')}
@@ -157,11 +157,11 @@ function PlacesTable() {
                                             {place?.candidateId?.firstName}
                                         </span>
                                     </TableCell>
-                                    <TableCell>
+                                    {/* <TableCell>
                                         <span className='text-sm'>
                                             {new Date(place.date).toISOString().split('T')[0]}
                                         </span>
-                                    </TableCell>
+                                    </TableCell> */}
 
                                     <TableCell>
                                         <span className='text-sm'>
@@ -172,9 +172,9 @@ function PlacesTable() {
                                         <span className='text-sm'>{place?.candidateId?.email}</span>
                                     </TableCell>
 
-                                    <TableCell>
+                                    {/* <TableCell>
                                         <span className='text-sm'>{place.hr?.userName}</span>{' '}
-                                    </TableCell>
+                                    </TableCell> */}
                                     <TableCell>
                                         <div className='flex justify-end text-right'>
                                             <button

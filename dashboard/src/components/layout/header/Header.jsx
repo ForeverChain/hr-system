@@ -349,7 +349,7 @@ function Header() {
                                                     className='w-4 h-4 mr-3'
                                                     aria-hidden='true'
                                                 />
-                                                <span>Dashboard</span>
+                                                <span>Дашбоард</span>
                                             </span>
                                         </Link>
                                     </li>
@@ -375,7 +375,7 @@ function Header() {
                                                 className='w-4 h-4 mr-3'
                                                 aria-hidden='true'
                                             />
-                                            <span>LogOut</span>
+                                            <span>Гарах</span>
                                         </span>
                                     </li>
                                 </ul>

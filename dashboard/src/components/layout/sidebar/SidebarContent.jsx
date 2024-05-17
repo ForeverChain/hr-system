@@ -18,18 +18,24 @@ function SidebarContent() {
     const { t } = useTranslation();
     const history = useHistory();
     const { authState, setAuthState } = useGlobalCtx();
+    console.log('authState', authState);
+
     const handleLogOut = () => {
         Cookies.remove(CookieName.LOGGED_USER);
         Cookies.remove(CookieName.TOKEN);
         setAuthState(null);
         history.push('/login');
     };
+    console.log(authState);
+
+    const filteredRoutes =
+        authState?.userType === '1' ? sidebar.filter((route) => route.showAdmin) : sidebar;
 
     return (
         <div className='py-4 text-gray-500 dark:text-gray-400'>
             <Logo />
             <ul className='mt-8'>
-                {sidebar.map((route) =>
+                {filteredRoutes.map((route) =>
                     route.routes ? (
                         <SidebarSubMenu route={route} key={route.name} />
                     ) : (

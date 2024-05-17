@@ -10,12 +10,12 @@ function PrivateRoute({ children, ...rest }) {
     const token = Cookies.get(CookieName.TOKEN);
     const isTokenEnded = isTokenExpired(token);
     const { setAuthState } = useGlobalCtx();
-    useEffect(() => {
-        if (!isTokenEnded) {
-            const decoded = jwtDecode(token);
-            setAuthState(decoded);
-        }
-    }, []);
+    // useEffect(() => {
+    //     if (!isTokenEnded) {
+    //         const decoded = jwtDecode(token);
+    //         setAuthState(decoded);
+    //     }
+    // }, []);
     return (
         <Route
             {...rest}

@@ -21,9 +21,9 @@ function GlobalProvider({ children }) {
     const [edittingRowInfo, setEdittingRowInfo] = useState(null);
     const [drawerSubmitLoading, setDrawerSubmitLoading] = useState(false);
 
-    const setTokenIntoAuthState = (token) => {
-        setAuthState((prev) => ({ ...prev, token }));
-    };
+    // const setTokenIntoAuthState = (token) => {
+    //     setAuthState((prev) => ({ ...prev, token }));
+    // };
 
     return (
         <GlobalContext.Provider
@@ -34,7 +34,6 @@ function GlobalProvider({ children }) {
                 setGlobalItems,
                 authState,
                 setAuthState,
-                setTokenIntoAuthState,
                 myPageState,
                 setMyPageState,
                 web3Items,

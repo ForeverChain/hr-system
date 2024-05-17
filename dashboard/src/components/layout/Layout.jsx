@@ -24,9 +24,7 @@ function Layout() {
     return (
         <>
             {!isOnline && (
-                <div className='flex justify-center bg-red-600 text-white'>
-                    You are in offline mode!{' '}
-                </div>
+                <div className='flex justify-center bg-red-600 text-white'>Интернетгүй горим! </div>
             )}
             <div
                 className={`flex h-screen bg-gray-50 dark:bg-gray-900 ${

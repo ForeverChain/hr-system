@@ -84,7 +84,7 @@ export default function usePlace() {
     async function getProfileInfo() {
         try {
             const res = await PlaceServices.getProfileInfo();
-            setAuthState(res?.result);
+            // setAuthState(res?.result);
         } catch (e) {
             console.error(e);
         }

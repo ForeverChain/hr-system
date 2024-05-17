@@ -18,27 +18,32 @@ const sidebar = [
         path: '/admins',
         icon: FiUser,
         name: 'Админууд',
+        showAdmin: true,
     },
     {
         path: '/hr',
         icon: FiUser,
         name: 'Хүний нөөцийн менежер',
+        showAdmin: true,
     },
     {
         path: '/customers',
         icon: FiUsers,
         name: 'Ажилчдын мэдээлэл',
+        showAdmin: false,
     },
 
     {
         path: '/interview',
         icon: GiPlatform,
         name: 'Сонгон шалгаруулалт',
+        showAdmin: false,
     },
     {
         path: '/rating',
         icon: FcRating,
         name: 'Ажилчдын үнэлгээ',
+        showAdmin: false,
     },
 
     // {

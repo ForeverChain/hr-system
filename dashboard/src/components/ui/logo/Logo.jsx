@@ -13,10 +13,6 @@ function Logo() {
             ) : (
                 <img src={logoDark} alt='Dashtar' width='70' height='70' className='pl-6' />
             )}
-            <span className='font-bold dark:text-white leading-none'>
-                Meta
-                <h3 className='text-green-700 dark:text-white'>Asset</h3>
-            </span>
         </Logotw>
     );
 }
