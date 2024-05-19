@@ -80,7 +80,8 @@ function UsersTable({ customers }) {
             payload.append(key, form.value);
         });
 
-        payload.append('isSelected', true);
+        payload.append('type', "processing");
+
 
         updateUser(id, payload)
             .then((res) => {

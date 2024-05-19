@@ -5,11 +5,19 @@ import { useUsersCtx } from './useUsersCtx';
 export default function useUsers() {
     const { setUsersList, setUsersDetail, setUsersExportList } = useUsersCtx();
 
-    async function getAllCustomersList(searchingText, page = 0) {
+    async function getAllCustomersList(searchingText, page = 0, filter="") {
         try {
             const res = await CustomerServices.getAllCustomers({ searchText: searchingText, page })
                 .then((response) => {
-                    setUsersList(response?.data);
+                    if(filter !== "" )
+                        {
+                            let filteredData = response?.data?.filter((user) => {
+                                return user.type === filter;
+                            });
+                            
+                        setUsersList(filteredData);
+                    }
+
                     return response;
                 })
                 .catch((err) => {

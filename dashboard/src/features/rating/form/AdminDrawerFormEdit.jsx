@@ -109,7 +109,7 @@ export default function AdminDrawerFormEdit({ id }) {
                         className='block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4'
                         htmlFor='talkingSkill'
                     >
-                        Ярианы чадвар
+                        Харилцаа
                     </label>
                 </div>
                 <div className='md:w-2/3'>
@@ -136,7 +136,7 @@ export default function AdminDrawerFormEdit({ id }) {
                         className='block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4'
                         htmlFor='appearance'
                     >
-                        Гадаад үзэмж
+                        Асуултанд хариулж буй байдал
                     </label>
                 </div>
                 <div className='md:w-2/3'>
@@ -163,7 +163,7 @@ export default function AdminDrawerFormEdit({ id }) {
                         className='block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4'
                         htmlFor='advantage'
                     >
-                        Давуу тал
+                        Хандлага
                     </label>
                 </div>
                 <div className='md:w-2/3'>
@@ -189,7 +189,7 @@ export default function AdminDrawerFormEdit({ id }) {
                         className='block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4'
                         htmlFor='disadvantage'
                     >
-                        Сул тал
+                        Идэвхи санаачлага
                     </label>
                 </div>
                 <div className='md:w-2/3'>
@@ -215,7 +215,7 @@ export default function AdminDrawerFormEdit({ id }) {
                         className='block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4'
                         htmlFor='skills'
                     >
-                        Чадварууд
+                        Өөрийгөө хөгжүүлэх зан чанар
                     </label>
                 </div>
                 <div className='md:w-2/3'>
@@ -258,7 +258,7 @@ export default function AdminDrawerFormEdit({ id }) {
                         className='block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4'
                         htmlFor='goodAblity'
                     >
-                        Анхаарал татсан чадвар
+                        Манлайлал болон багаар ажиллах
                     </label>
                 </div>
                 <div className='md:w-2/3'>

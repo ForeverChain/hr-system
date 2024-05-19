@@ -143,7 +143,7 @@ function PlacesTable() {
                 <TableBody>
                     {sortedPlaces?.map(
                         (place) =>
-                            place?.candidateId?.isSelected && (
+                            place?.candidateId?.type === "completed" && (
                                 <TableRow key={place._id}>
                                     <TableCell>
                                         <span className='font-semibold uppercase text-xs'>

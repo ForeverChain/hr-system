@@ -31,6 +31,9 @@ import AdminsDrawer from './adminsDrawer/AdminsDrawer';
 import { SidebarContext } from '@/components/layout/sidebar/SidebarContext';
 import { useLocation } from 'react-router-dom';
 import { useGlobalCtx } from '@/common/global/useGlobalCtx';
+import { FcRating } from 'react-icons/fc';
+import usePlace from './usePlace';
+import useUsers from '../user/useUsers';
 
 function PlacesTable() {
     const history = useHistory();
@@ -38,6 +41,7 @@ function PlacesTable() {
         useToggleDrawer();
     const { placeList, pagination, setPagination, claimsListQueryParams, setPlaceList } =
         usePlaceCtx();
+    const { getAllAdminsList, getExportCustomersList, addHr } = usePlace();
 
     const location = useLocation();
 
@@ -47,23 +51,12 @@ function PlacesTable() {
     const [sortBy, setSortBy] = useState(null);
     const [sortOrder, setSortOrder] = useState('asc');
 
-    async function onPageChange(page) {
-        setPagination((prev) => ({
-            ...prev,
-            currentPage: page,
-        }));
-        const payLoad = {
-            ...claimsListQueryParams,
-            page: page - 1,
-        };
-        const res = await placeService.getPlaceList(payLoad);
-        setPlaceList(res.data);
-    }
 
     function openModal(rowInfo) {
         showPopup(POPUP_TYPES.DELETE_INTERVIEW);
         setPopupState((prev) => ({ ...prev, deletingUserInfo: rowInfo }));
     }
+    const { updateUser } = useUsers();
 
     // useEffect(() => {
     //     // Check if location.state.user and location.state.user._id exist
@@ -118,12 +111,16 @@ function PlacesTable() {
             return scoreB - scoreA;
         }
     });
+    const anketUpdate = (id) => {
+        const payload = new FormData();
+        payload.append('type', "completed");
+        updateUser(id, payload)
+    }
 
     const { showDrawer } = useDrawerCtx();
 
     const { toggleDrawer, isDrawerOpen } = useContext(SidebarContext);
 
-    console.log('sortedPlaces', placeList);
     return (
         <>
             <MainDrawer>
@@ -149,7 +146,7 @@ function PlacesTable() {
                 <TableBody>
                     {sortedPlaces?.map(
                         (place) =>
-                            place?.candidateId?.isSelected && (
+                            place?.candidateId?.type === "processing" && (
                                 <TableRow key={place._id}>
                                     <TableCell>
                                         <span className='font-semibold uppercase text-xs'>
@@ -198,6 +195,21 @@ function PlacesTable() {
                                                 handleUpdate={handleUpdate}
                                                 openDeleteModal={() => openModal(place)}
                                             />
+
+                                            <button
+                                                className='p-2 cursor-pointer text-gray-400 hover:text-emerald-600 focus:outline-none'
+                                                onClick={() => {
+                                                    anketUpdate(place?.candidateId?._id)
+                                                }}
+                                            >
+                                                <Tooltip
+                                                    id='view'
+                                                    Icon={FcRating}
+                                                    title='View Attribute'
+                                                    bgColor='#34D399'
+                                                />
+                                            </button>
+
                                         </div>
                                     </TableCell>
                                 </TableRow>
