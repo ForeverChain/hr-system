@@ -67,7 +67,7 @@ export default function AdminDrawerFormEdit({ id }) {
                         <option value=''>Сонгоорой...</option>
                         {candidateList.map(
                             (candidate) =>
-                                candidate.isSelected && (
+                                candidate.type === 'processing' && (
                                     <option key={candidate?._id} value={candidate?._id}>
                                         {candidate?.lastName} {candidate?.firstName}
                                     </option>
