@@ -35,6 +35,7 @@ function UsersTable({ customers }) {
 
     const handleLinkClick = (id, user) => {
         // Update form data with user information
+
         const formData = {
             lastName: { value: user?.lastName || '', error: null },
             firstName: { value: user?.firstName || '', error: null },
@@ -80,8 +81,7 @@ function UsersTable({ customers }) {
             payload.append(key, form.value);
         });
 
-        payload.append('type', "processing");
-
+        payload.append('type', 'processing');
 
         updateUser(id, payload)
             .then((res) => {
@@ -96,6 +96,10 @@ function UsersTable({ customers }) {
             });
     };
 
+    function timeModal(id, user) {
+        showPopup(POPUP_TYPES.TIME_USER);
+        setPopupState((prev) => ({ ...prev, deletingUserInfo: user }));
+    }
     return (
         <>
             <MainDrawer>
@@ -124,13 +128,9 @@ function UsersTable({ customers }) {
                         <TableCell>
                             <div className='flex justify-end text-right'>
                                 <button className='p-2 cursor-pointer text-gray-400 hover:text-emerald-600 focus:outline-none'>
-                                    <Link
-                                        to={{
-                                            pathname: '/interview',
-                                            state: { user },
-                                        }}
+                                    <button
                                         className='p-2 cursor-pointer text-gray-400 hover:text-emerald-600 focus:outline-none'
-                                        onClick={() => handleLinkClick(user._id, user)}
+                                        onClick={() => timeModal(user._id, user)}
                                     >
                                         <Tooltip
                                             id='edit'
@@ -138,7 +138,7 @@ function UsersTable({ customers }) {
                                             title={t('Edit')}
                                             bgColor='#10B981'
                                         />
-                                    </Link>
+                                    </button>
                                 </button>
                                 <EditDeleteButton
                                     title={user?.name}

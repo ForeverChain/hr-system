@@ -1,6 +1,7 @@
 import { lazy } from 'react';
 const LicenseAgreementPopup = lazy(() => import('@/features/admin/popup/DummyAdminPopup'));
 const DeleteUserPopup = lazy(() => import('@/features/user/popup/DeleteUserPopup'));
+const TimePopUp = lazy(() => import('@/features/user/popup/DateConfirmationPopup'));
 const DeleteAdminPopup = lazy(() => import('@/features/admin/popup/DeleteAdminPopup'));
 const CreateInterviewPopup = lazy(() => import('@/features/interview/popup/CreateInterviewPopup'));
 const RatingPopup = lazy(() => import('@/features/rating/popup/RatingPopup'));
@@ -17,6 +18,7 @@ const AnketPopup = lazy(() => import('@/features/rating/popup/AnketPopup'));
 export const POPUP_TYPES = {
     LICENSE_AGREEMENT: 'LICENSE_AGREEMENT',
     DELETE_USER: 'DeleteUserPopup',
+    TIME_USER: 'TimePopUp',
     DELETE_ADMIN: 'DeleteAdminPopup',
     DELETE_INTERVIEW: 'DeleteInterviewPopup',
     CREATE_INTERVIEW: 'CreateInterviewPopup',
@@ -32,6 +34,7 @@ export const POPUP_TYPES = {
 export const POPUP_COMPONENTS = {
     [POPUP_TYPES.LICENSE_AGREEMENT]: LicenseAgreementPopup,
     [POPUP_TYPES.DELETE_USER]: DeleteUserPopup,
+    [POPUP_TYPES.TIME_USER]: TimePopUp,
     [POPUP_TYPES.DELETE_ADMIN]: DeleteAdminPopup,
     [POPUP_TYPES.CREATE_INTERVIEW]: CreateInterviewPopup,
     [POPUP_TYPES.RATING_POPUP]: RatingPopup,

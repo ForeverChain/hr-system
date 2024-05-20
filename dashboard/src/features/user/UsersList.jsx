@@ -56,7 +56,7 @@ export default function UsersList() {
     }
 
     useEffect(() => {
-        getAllCustomersList(searchingText, currentPage - 1, "pending").then((res) => {});
+        getAllCustomersList(searchingText, currentPage - 1, 'pending').then((res) => {});
     }, [currentPage]);
 
     return (

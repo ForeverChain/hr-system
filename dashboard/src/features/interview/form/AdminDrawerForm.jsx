@@ -287,9 +287,6 @@ export default function AdminDrawerForm({ id }) {
                 </div>
             </div>
 
-
-            
-
             <div className='md:flex md:items-center mb-6'>
                 <div className='md:w-1/3'>
                     <label
